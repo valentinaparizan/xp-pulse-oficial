@@ -1,0 +1,194 @@
+[
+  {
+    "ticker": "PETR4",
+    "name": "Petrobras",
+    "price": 48.72,
+    "bull": [
+      {
+        "icon": "🛢",
+        "title": "Petróleo mais caro",
+        "short": "Pode favorecer receitas ligadas à produção.",
+        "detail": "A Petrobras produz e vende petróleo. Mudanças no preço internacional podem afetar receitas, margens e expectativas, mas não determinam sozinhas o preço da ação."
+      },
+      {
+        "icon": "🌍",
+        "title": "Cenário global",
+        "short": "Pode influenciar oferta e preço do petróleo.",
+        "detail": "Tensões e decisões de grandes produtores podem alterar a oferta global. Câmbio, custos e expectativas também importam."
+      },
+      {
+        "icon": "📊",
+        "title": "Resultados fortes",
+        "short": "Podem melhorar a percepção do mercado.",
+        "detail": "Produção, margens, custos e distribuição de resultados são avaliados em conjunto pelos investidores."
+      }
+    ],
+    "bear": [
+      {
+        "icon": "🛢",
+        "title": "Petróleo mais barato",
+        "short": "Pode pressionar receitas e margens.",
+        "detail": "Uma queda do petróleo pode reduzir receitas, mas câmbio, produção, custos e política comercial também afetam o resultado."
+      },
+      {
+        "icon": "🏛",
+        "title": "Mudanças relevantes",
+        "short": "Podem alterar expectativas dos investidores.",
+        "detail": "Mudanças de estratégia, governança ou política de preços podem mudar a leitura do mercado, sem efeito automático."
+      },
+      {
+        "icon": "📉",
+        "title": "Resultado abaixo do esperado",
+        "short": "Pode pressionar a percepção sobre a empresa.",
+        "detail": "O mercado compara os números divulgados com suas expectativas. Uma surpresa negativa pode pesar, junto de vários outros fatores."
+      }
+    ],
+    "sourceDate": "2026-09-28",
+    "sourceUrl": "https://opcoes.net.br/PETRJ500",
+    "dataType": "real_snapshot"
+  },
+  {
+    "ticker": "VALE3",
+    "name": "Vale",
+    "price": 71.16,
+    "bull": [
+      {
+        "icon": "⛏",
+        "title": "Minério mais caro",
+        "short": "Pode favorecer receitas da Vale.",
+        "detail": "O preço internacional do minério pode afetar receitas, mas câmbio, custos e volumes também importam."
+      },
+      {
+        "icon": "🇨🇳",
+        "title": "Demanda da China",
+        "short": "Pode apoiar a procura por minério.",
+        "detail": "A atividade industrial chinesa influencia a demanda global, sem garantir movimento da ação."
+      },
+      {
+        "icon": "📦",
+        "title": "Produção eficiente",
+        "short": "Pode apoiar resultados operacionais.",
+        "detail": "Volumes, qualidade do minério e custos logísticos influenciam a leitura dos resultados."
+      }
+    ],
+    "bear": [
+      {
+        "icon": "⛏",
+        "title": "Minério mais barato",
+        "short": "Pode pressionar receitas.",
+        "detail": "Preços menores podem pesar nas receitas, junto com câmbio, custos e volumes."
+      },
+      {
+        "icon": "🏗",
+        "title": "Demanda mais fraca",
+        "short": "Pode reduzir a procura por minério.",
+        "detail": "Menor atividade industrial pode afetar a demanda, mas o efeito não é automático."
+      },
+      {
+        "icon": "⚙️",
+        "title": "Custos maiores",
+        "short": "Podem pressionar margens.",
+        "detail": "Custos de produção e logística podem influenciar a rentabilidade percebida."
+      }
+    ],
+    "sourceDate": "2026-09-28",
+    "sourceUrl": "https://opcoes.net.br/VALEV822",
+    "dataType": "real_snapshot"
+  },
+  {
+    "ticker": "ITUB4",
+    "name": "Itaú Unibanco",
+    "price": 41.71,
+    "bull": [
+      {
+        "icon": "💳",
+        "title": "Crédito saudável",
+        "short": "Pode apoiar resultados do banco.",
+        "detail": "Crescimento do crédito com controle de risco pode favorecer receitas, sem garantir alta da ação."
+      },
+      {
+        "icon": "📉",
+        "title": "Inadimplência menor",
+        "short": "Pode reduzir perdas esperadas.",
+        "detail": "A qualidade da carteira é uma das variáveis acompanhadas pelo mercado."
+      },
+      {
+        "icon": "📊",
+        "title": "Resultados fortes",
+        "short": "Podem melhorar a percepção do mercado.",
+        "detail": "Receitas, custos, crédito e provisões são avaliados em conjunto."
+      }
+    ],
+    "bear": [
+      {
+        "icon": "⚠️",
+        "title": "Inadimplência maior",
+        "short": "Pode pressionar resultados.",
+        "detail": "Mais atrasos podem elevar provisões e perdas, junto de outras variáveis."
+      },
+      {
+        "icon": "📉",
+        "title": "Crédito mais fraco",
+        "short": "Pode limitar receitas.",
+        "detail": "Menor demanda ou concessão pode desacelerar a carteira."
+      },
+      {
+        "icon": "🏦",
+        "title": "Pressão nas margens",
+        "short": "Pode afetar a rentabilidade.",
+        "detail": "Juros, competição e mix de produtos podem influenciar as margens."
+      }
+    ],
+    "sourceDate": "2026-09-28",
+    "sourceUrl": "https://cifrix.com.br/opcoes/ITUB4",
+    "dataType": "real_snapshot"
+  },
+  {
+    "ticker": "B3SA3",
+    "name": "B3",
+    "price": 18.04,
+    "bull": [
+      {
+        "icon": "📈",
+        "title": "Mais negociação",
+        "short": "Pode favorecer receitas da B3.",
+        "detail": "Maior atividade nos mercados pode elevar receitas, mas não determina o preço da ação."
+      },
+      {
+        "icon": "🧾",
+        "title": "Novas emissões",
+        "short": "Podem ampliar serviços e receitas.",
+        "detail": "A atividade no mercado de capitais influencia diferentes linhas de negócio da B3."
+      },
+      {
+        "icon": "⚙️",
+        "title": "Eficiência operacional",
+        "short": "Pode apoiar margens.",
+        "detail": "Custos e eficiência são avaliados junto com volumes e receitas."
+      }
+    ],
+    "bear": [
+      {
+        "icon": "📉",
+        "title": "Menor volume",
+        "short": "Pode pressionar receitas.",
+        "detail": "Menos negociação pode reduzir algumas receitas, sem efeito isolado ou garantido."
+      },
+      {
+        "icon": "🏁",
+        "title": "Mais competição",
+        "short": "Pode alterar expectativas.",
+        "detail": "Novos concorrentes e mudanças regulatórias podem afetar o cenário competitivo."
+      },
+      {
+        "icon": "🧾",
+        "title": "Poucas emissões",
+        "short": "Podem reduzir atividade.",
+        "detail": "Um mercado de capitais menos ativo pode afetar linhas específicas de receita."
+      }
+    ],
+    "sourceDate": "2026-09-23",
+    "sourceUrl": "https://opcoes.net.br/B3SAJ180",
+    "dataType": "real_snapshot"
+  }
+]

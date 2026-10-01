@@ -1,0 +1,11 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { payoff, optionCost, breakEven } from './optionsMath.ts';
+import { selectOptions, availableExpiries } from './optionFilters.ts';
+import type { Option } from '../types/market.ts';
+const call:Option={ticker:'TEST',underlying:'TEST4',type:'CALL',strike:32,premium:.42,contractSize:100,quoteFactor:1,expiry:'2026-10-16',sourceDate:'2026-09-30',sourceUrl:'https://example.com',dataType:'illustrative',premiumType:'illustrative',quantityType:'illustrative',style:'test',specificationDate:'2026-09-30'};
+test('CALL: perda total, equilíbrio e ganho no vencimento',()=>{assert.equal(optionCost(call),42);assert.equal(payoff(call,0).result,-42);assert.equal(payoff(call,32).result,-42);assert.equal(payoff(call,32.42).result,0);assert.equal(payoff(call,38).result,558);assert.equal(breakEven(call),32.42);});
+test('PUT: perda limitada ao prêmio, equilíbrio e ganho',()=>{const put={...call,type:'PUT' as const};assert.equal(payoff(put,38).result,-42);assert.equal(payoff(put,31.58).result,0);assert.equal(payoff(put,28).result,358);assert.equal(payoff(put,0).result,3158);assert.equal(breakEven(put),31.58);});
+test('fator de cotação e quantidade não são confundidos',()=>{assert.equal(optionCost({...call,quoteFactor:100}),.42);assert.equal(payoff({...call,quoteFactor:100},33).result,99.58);});
+test('filtros: direção, vencimento, ativo, orçamento, dados inválidos e strike mais próximo',()=>{const data=[call,{...call,ticker:'NEAR',strike:30,premium:.5},{...call,ticker:'PUT',type:'PUT' as const},{...call,ticker:'OTHER',underlying:'OTHER4'},{...call,ticker:'DATE',expiry:'2026-12-18'},{...call,ticker:'BAD',premium:NaN}];assert.deepEqual(selectOptions(data,'TEST4','CALL','2026-10-16',50,30).affordable.map(x=>x.ticker),['NEAR','TEST']);assert.equal(selectOptions(data,'TEST4','CALL','2026-10-16',20,30).minimum,42);assert.equal(selectOptions(data,'TEST4','CALL','2026-10-16',-1,30).affordable.length,0);assert.equal(selectOptions(data,'UNKNOWN','CALL','2026-10-16',50,30).minimum,null);assert.deepEqual(availableExpiries(data,'TEST4','PUT'),['2026-10-16']);});
+test('preço negativo ou não finito é rejeitado',()=>{assert.throws(()=>payoff(call,-1));assert.throws(()=>payoff(call,NaN));});
