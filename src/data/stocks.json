@@ -8,19 +8,19 @@
         "icon": "🛢",
         "title": "Petróleo mais caro",
         "short": "Pode favorecer receitas ligadas à produção.",
-        "detail": "A Petrobras produz e vende petróleo. Mudanças no preço internacional podem afetar receitas, margens e expectativas, mas não determinam sozinhas o preço da ação."
+        "detail": "Se o barril vendido fica mais caro e o volume se mantém, a receita da produção pode crescer. Mas o lucro depende também do custo de extrair, refinar e transportar, além do câmbio e dos preços praticados pela empresa."
       },
       {
         "icon": "🌍",
         "title": "Cenário global",
         "short": "Pode influenciar oferta e preço do petróleo.",
-        "detail": "Tensões e decisões de grandes produtores podem alterar a oferta global. Câmbio, custos e expectativas também importam."
+        "detail": "Uma redução da oferta mundial de petróleo, sem queda equivalente da demanda, pode pressionar o preço do barril para cima. Isso pode beneficiar a produção, mas conflitos também podem elevar custos e reduzir atividade econômica."
       },
       {
         "icon": "📊",
         "title": "Resultados fortes",
         "short": "Podem melhorar a percepção do mercado.",
-        "detail": "Produção, margens, custos e distribuição de resultados são avaliados em conjunto pelos investidores."
+        "detail": "Vender mais, produzir com menor custo ou melhorar margens pode aumentar o lucro esperado. Um resultado alto só tende a surpreender positivamente quando supera o que os investidores já esperavam."
       }
     ],
     "bear": [
@@ -28,19 +28,19 @@
         "icon": "🛢",
         "title": "Petróleo mais barato",
         "short": "Pode pressionar receitas e margens.",
-        "detail": "Uma queda do petróleo pode reduzir receitas, mas câmbio, produção, custos e política comercial também afetam o resultado."
+        "detail": "Se a empresa recebe menos por barril vendido, pode gerar menos receita com o mesmo volume. A redução de custos ou mudanças no câmbio podem amortecer esse efeito; as atividades de refino podem reagir de outra forma."
       },
       {
         "icon": "🏛",
         "title": "Mudanças relevantes",
         "short": "Podem alterar expectativas dos investidores.",
-        "detail": "Mudanças de estratégia, governança ou política de preços podem mudar a leitura do mercado, sem efeito automático."
+        "detail": "Decisões de preços, investimentos e governança alteram as expectativas de geração de caixa. Se o mercado passar a esperar menor retorno ou mais incerteza, pode aceitar pagar menos pela ação."
       },
       {
         "icon": "📉",
         "title": "Resultado abaixo do esperado",
         "short": "Pode pressionar a percepção sobre a empresa.",
-        "detail": "O mercado compara os números divulgados com suas expectativas. Uma surpresa negativa pode pesar, junto de vários outros fatores."
+        "detail": "Se receitas, produção ou margens vierem piores que o esperado, o mercado pode revisar para baixo o lucro futuro. Mesmo lucro positivo pode decepcionar quando a expectativa era maior."
       }
     ],
     "sourceDate": "2026-09-28",
@@ -56,19 +56,19 @@
         "icon": "⛏",
         "title": "Minério mais caro",
         "short": "Pode favorecer receitas da Vale.",
-        "detail": "O preço internacional do minério pode afetar receitas, mas câmbio, custos e volumes também importam."
+        "detail": "A Vale vende minério. Receber mais por tonelada, mantendo o volume, pode aumentar a receita. Se os custos não subirem na mesma proporção, a margem pode melhorar. Qualidade do minério, câmbio e despesas logísticas também influenciam."
       },
       {
         "icon": "🇨🇳",
         "title": "Demanda da China",
         "short": "Pode apoiar a procura por minério.",
-        "detail": "A atividade industrial chinesa influencia a demanda global, sem garantir movimento da ação."
+        "detail": "Siderúrgicas usam minério para produzir aço. Mais construção e atividade industrial na China podem aumentar a procura por aço e, em seguida, por minério. Isso pode sustentar volumes e preços, mas estoques e oferta de outras mineradoras podem limitar o efeito."
       },
       {
         "icon": "📦",
         "title": "Produção eficiente",
         "short": "Pode apoiar resultados operacionais.",
-        "detail": "Volumes, qualidade do minério e custos logísticos influenciam a leitura dos resultados."
+        "detail": "Produzir e transportar cada tonelada com menos desperdício pode reduzir o custo unitário. Com preço de venda estável, sobra mais por tonelada. Mais volume só ajuda se puder ser vendido e não exigir custos desproporcionais."
       }
     ],
     "bear": [
@@ -76,19 +76,19 @@
         "icon": "⛏",
         "title": "Minério mais barato",
         "short": "Pode pressionar receitas.",
-        "detail": "Preços menores podem pesar nas receitas, junto com câmbio, custos e volumes."
+        "detail": "Com menor preço por tonelada, a mesma produção gera menos receita. Se os custos não caírem junto, a margem diminui. Câmbio, volume vendido e qualidade do produto podem compensar parte da pressão."
       },
       {
         "icon": "🏗",
         "title": "Demanda mais fraca",
         "short": "Pode reduzir a procura por minério.",
-        "detail": "Menor atividade industrial pode afetar a demanda, mas o efeito não é automático."
+        "detail": "Menos construção ou produção industrial pode reduzir a necessidade de aço. As siderúrgicas podem comprar menos minério, pressionando volumes e preços. Estoques, estímulos econômicos e cortes de oferta podem mudar essa relação."
       },
       {
         "icon": "⚙️",
         "title": "Custos maiores",
         "short": "Podem pressionar margens.",
-        "detail": "Custos de produção e logística podem influenciar a rentabilidade percebida."
+        "detail": "Combustível, frete, manutenção e outras despesas maiores podem reduzir o que sobra de cada venda. Se o preço do minério não compensar, o lucro esperado pode cair. Importa saber se o aumento é temporário ou persistente."
       }
     ],
     "sourceDate": "2026-09-28",
@@ -104,19 +104,19 @@
         "icon": "💳",
         "title": "Crédito saudável",
         "short": "Pode apoiar resultados do banco.",
-        "detail": "Crescimento do crédito com controle de risco pode favorecer receitas, sem garantir alta da ação."
+        "detail": "Mais empréstimos podem gerar mais receita de juros, desde que clientes paguem e o risco seja controlado. Crescer a carteira sem avaliar bem o crédito pode aumentar perdas futuras em vez de melhorar o resultado."
       },
       {
         "icon": "📉",
         "title": "Inadimplência menor",
         "short": "Pode reduzir perdas esperadas.",
-        "detail": "A qualidade da carteira é uma das variáveis acompanhadas pelo mercado."
+        "detail": "Se menos clientes atrasam ou deixam de pagar, as perdas esperadas podem diminuir. Isso pode reduzir a necessidade de provisões, valores reservados contabilmente para perdas de crédito, e favorecer o resultado."
       },
       {
         "icon": "📊",
         "title": "Resultados fortes",
         "short": "Podem melhorar a percepção do mercado.",
-        "detail": "Receitas, custos, crédito e provisões são avaliados em conjunto."
+        "detail": "Mais receitas e controle de despesas podem melhorar o lucro e o retorno sobre o capital. É importante separar melhora recorrente de eventos pontuais e comparar o resultado com as expectativas."
       }
     ],
     "bear": [
@@ -124,19 +124,19 @@
         "icon": "⚠️",
         "title": "Inadimplência maior",
         "short": "Pode pressionar resultados.",
-        "detail": "Mais atrasos podem elevar provisões e perdas, junto de outras variáveis."
+        "detail": "Mais atrasos podem exigir maiores provisões e causar perdas nos empréstimos. Mesmo que a receita de juros cresça, as perdas de crédito podem consumir parte desse ganho."
       },
       {
         "icon": "📉",
         "title": "Crédito mais fraco",
         "short": "Pode limitar receitas.",
-        "detail": "Menor demanda ou concessão pode desacelerar a carteira."
+        "detail": "Menos procura ou maior restrição à concessão de crédito pode desacelerar a carteira e a receita de juros. Porém, emprestar menos também pode preservar a qualidade da carteira num cenário de risco elevado."
       },
       {
         "icon": "🏦",
         "title": "Pressão nas margens",
         "short": "Pode afetar a rentabilidade.",
-        "detail": "Juros, competição e mix de produtos podem influenciar as margens."
+        "detail": "O banco paga para captar recursos e recebe ao emprestá-los. Se o custo de captação sobe mais que a receita, ou a competição reduz preços, essa diferença pode diminuir. O efeito dos juros depende da composição dos ativos e passivos."
       }
     ],
     "sourceDate": "2026-09-28",
@@ -152,19 +152,19 @@
         "icon": "📈",
         "title": "Mais negociação",
         "short": "Pode favorecer receitas da B3.",
-        "detail": "Maior atividade nos mercados pode elevar receitas, mas não determina o preço da ação."
+        "detail": "Mais negócios podem ampliar receitas ligadas à negociação, compensação e liquidação. O efeito depende de quais produtos são negociados e das tarifas: dobrar o volume não significa necessariamente dobrar a receita."
       },
       {
         "icon": "🧾",
         "title": "Novas emissões",
         "short": "Podem ampliar serviços e receitas.",
-        "detail": "A atividade no mercado de capitais influencia diferentes linhas de negócio da B3."
+        "detail": "Quando empresas captam recursos no mercado, podem demandar serviços de listagem, registro e infraestrutura. Uma agenda mais ativa pode favorecer receitas, mas diferentes emissões têm efeitos distintos."
       },
       {
         "icon": "⚙️",
         "title": "Eficiência operacional",
         "short": "Pode apoiar margens.",
-        "detail": "Custos e eficiência são avaliados junto com volumes e receitas."
+        "detail": "Se a receita cresce sem que os custos aumentem na mesma proporção, a margem pode melhorar. Investimentos em tecnologia e segurança são necessários, por isso cortes de despesas nem sempre representam ganhos sustentáveis."
       }
     ],
     "bear": [
@@ -172,19 +172,19 @@
         "icon": "📉",
         "title": "Menor volume",
         "short": "Pode pressionar receitas.",
-        "detail": "Menos negociação pode reduzir algumas receitas, sem efeito isolado ou garantido."
+        "detail": "Menos negócios podem reduzir receitas associadas ao volume negociado. Outras linhas, como dados e serviços de registro, podem amortecer o efeito; a composição do volume também importa."
       },
       {
         "icon": "🏁",
         "title": "Mais competição",
         "short": "Pode alterar expectativas.",
-        "detail": "Novos concorrentes e mudanças regulatórias podem afetar o cenário competitivo."
+        "detail": "Concorrentes podem disputar clientes e pressionar tarifas. Isso pode reduzir margens ou exigir investimentos adicionais, mas o efeito depende da adesão dos participantes e das condições competitivas."
       },
       {
         "icon": "🧾",
         "title": "Poucas emissões",
         "short": "Podem reduzir atividade.",
-        "detail": "Um mercado de capitais menos ativo pode afetar linhas específicas de receita."
+        "detail": "Com menos captações e operações no mercado de capitais, alguns serviços são menos demandados. O impacto depende de quanto essas linhas representam no resultado total e da evolução das demais atividades."
       }
     ],
     "sourceDate": "2026-09-23",
