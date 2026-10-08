@@ -24,7 +24,7 @@ const initial:Draft={version:2,selected:'',reason:'',customReason:'',step:0,tick
 function restore():Draft {
   try {const v=JSON.parse(localStorage.getItem(key)||'null');
     if(!v||!stocks.some(s=>s.ticker===v.ticker)||typeof v.budget!=='string'||typeof v.expiry!=='string'||!['','up','down'].includes(v.direction)||![0,1,2,3,4,5].includes(v.step)||(!Number.isFinite(v.scenario)||v.scenario < -100||v.scenario > 100))return initial;
-    return {...v,version:2,selected:typeof v.selected==='string'?v.selected:'',step:v.version===2?v.step:v.step>=3?v.step+1:v.step,reason:typeof v.reason==='string'?v.reason:'',customReason:typeof v.customReason==='string'?v.customReason:''};
+    return {...v,version:2,selected:typeof v.selected==='string'?v.selected:'',step:0,reason:typeof v.reason==='string'?v.reason:'',customReason:typeof v.customReason==='string'?v.customReason:''};
   }catch{return initial;}
 }
 
