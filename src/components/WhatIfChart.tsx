@@ -14,7 +14,7 @@ export function WhatIfChart({stock,option,options,budget,price,onPrice,onExpiry}
  const current=payoff(option,price).result;
  const dates=availableExpiries(options,stock.ticker,option.type);
  return <section className="what-if" aria-label="Gráfico E se o preço mudasse">
- <h2>E se… o preço fosse diferente?</h2><p>Arraste o preço. O ponto mostra quanto você teria de lucro ou prejuízo <b>no vencimento</b>.</p>
+ <h2>E se… o preço fosse diferente?</h2><p>Arraste o preço. O ponto mostra qual seria o resultado da sua estratégia <b>no vencimento</b>.</p>
  <label htmlFor={`${id}-date`}>Em qual prazo?</label><select id={`${id}-date`} value={option.expiry} onChange={e=>onExpiry(e.target.value)}>{dates.map(d=>{const s=selectOptions(options,stock.ticker,option.type,d,budget,stock.price);return <option key={d} value={d} disabled={!s.affordable.length}>{date(d)}{!s.affordable.length?` · precisa de ${money(s.minimum!)}`:''}</option>})}</select>
  <p className="disclaimer">{dates.length===1?'Só há um prazo desta direção na base. ':''}Ao trocar a data, outra série pode ser selecionada; strike e custo também podem mudar. Não isolamos o efeito do tempo.</p>
  <svg viewBox="0 0 540 245" role="img" aria-labelledby={`${id}-title ${id}-desc`}>
@@ -35,7 +35,7 @@ export function WhatIfChart({stock,option,options,budget,price,onPrice,onExpiry}
  <text x="284" y="240" textAnchor="middle" fill="#b8c3c9" fontSize="12">Preço da ação no vencimento</text>
  </svg>
  <label htmlFor={`${id}-price`}>Preço da ação: <b>{money(price)}</b></label><input id={`${id}-price`} type="range" min="0" max={maximum} step="0.01" value={price} onChange={e=>onPrice(Number(e.target.value))} aria-valuetext={`${money(price)}; ${current<0?'prejuízo':'resultado'} de ${money(Math.abs(current))}`}/>
- <p className="chart-result" role="status" aria-live="polite">{current<0?'Prejuízo':current>0?'Lucro':'Equilíbrio'}: <b>{money(Math.abs(current))}</b></p>
+ <p className="chart-result" role="status" aria-live="polite">Resultado simulado: <b>{money(current)}</b></p>
  <div className="simple-presets"><button onClick={()=>onPrice(option.type==='CALL'?0:maximum)}>Ver maior perda</button>{equilibrium>=0&&equilibrium<=maximum&&<button onClick={()=>onPrice(equilibrium)}>Ver equilíbrio</button>}<button onClick={()=>onPrice(option.type==='CALL'?maximum:0)}>Ver maior ganho da faixa</button></div>
  <p className="disclaimer">Perda máxima do prêmio: {money(cost)}. O maior ganho mostrado vale apenas para este intervalo do gráfico, não é uma promessa ou limite geral de lucro. Valores antes de taxas e tributos; não representam venda antecipada.</p>
  </section>;

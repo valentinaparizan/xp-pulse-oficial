@@ -2,7 +2,7 @@
   {
     "ticker": "PETR4",
     "name": "Petrobras",
-    "price": 48.72,
+    "price": 51.17,
     "bull": [
       {
         "icon": "🛢",
@@ -43,14 +43,14 @@
         "detail": "Se receitas, produção ou margens vierem piores que o esperado, o mercado pode revisar para baixo o lucro futuro. Mesmo lucro positivo pode decepcionar quando a expectativa era maior."
       }
     ],
-    "sourceDate": "2026-09-28",
-    "sourceUrl": "https://opcoes.net.br/PETRJ500",
-    "dataType": "real_snapshot"
+    "sourceDate": "2026-10-02",
+    "sourceUrl": "https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D02102026.ZIP",
+    "dataType": "b3_snapshot"
   },
   {
     "ticker": "VALE3",
     "name": "Vale",
-    "price": 71.16,
+    "price": 72.1,
     "bull": [
       {
         "icon": "⛏",
@@ -91,14 +91,14 @@
         "detail": "Combustível, frete, manutenção e outras despesas maiores podem reduzir o que sobra de cada venda. Se o preço do minério não compensar, o lucro esperado pode cair. Importa saber se o aumento é temporário ou persistente."
       }
     ],
-    "sourceDate": "2026-09-28",
-    "sourceUrl": "https://opcoes.net.br/VALEV822",
-    "dataType": "real_snapshot"
+    "sourceDate": "2026-10-02",
+    "sourceUrl": "https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D02102026.ZIP",
+    "dataType": "b3_snapshot"
   },
   {
     "ticker": "ITUB4",
     "name": "Itaú Unibanco",
-    "price": 41.71,
+    "price": 44.83,
     "bull": [
       {
         "icon": "💳",
@@ -139,14 +139,14 @@
         "detail": "O banco paga para captar recursos e recebe ao emprestá-los. Se o custo de captação sobe mais que a receita, ou a competição reduz preços, essa diferença pode diminuir. O efeito dos juros depende da composição dos ativos e passivos."
       }
     ],
-    "sourceDate": "2026-09-28",
-    "sourceUrl": "https://cifrix.com.br/opcoes/ITUB4",
-    "dataType": "real_snapshot"
+    "sourceDate": "2026-10-02",
+    "sourceUrl": "https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D02102026.ZIP",
+    "dataType": "b3_snapshot"
   },
   {
     "ticker": "B3SA3",
     "name": "B3",
-    "price": 18.04,
+    "price": 19,
     "bull": [
       {
         "icon": "📈",
@@ -187,8 +187,8 @@
         "detail": "Com menos captações e operações no mercado de capitais, alguns serviços são menos demandados. O impacto depende de quanto essas linhas representam no resultado total e da evolução das demais atividades."
       }
     ],
-    "sourceDate": "2026-09-23",
-    "sourceUrl": "https://opcoes.net.br/B3SAJ180",
-    "dataType": "real_snapshot"
+    "sourceDate": "2026-10-02",
+    "sourceUrl": "https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D02102026.ZIP",
+    "dataType": "b3_snapshot"
   }
 ]

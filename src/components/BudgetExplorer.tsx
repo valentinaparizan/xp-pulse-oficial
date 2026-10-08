@@ -24,8 +24,8 @@ export function BudgetExplorer({stock,options,budget,expiry,onApply}:{stock:Stoc
  return <details className="simple-details budget-explorer"><summary>E se eu usasse mais ou menos dinheiro?</summary>
  <p>Compare sem mudar sua escolha. Teste um limite e uma data; só aplicamos quando você confirmar abaixo.</p>
  <fieldset><legend>Limite para comparar</legend><div className="simple-presets">{amounts.map(a=><button key={a} aria-pressed={a===amount} onClick={()=>setAmount(a)}>{money(a)}<small>{a<starting?'Menos':a>starting?'Mais':'Seu valor'}</small></button>)}</div></fieldset>
- <fieldset><legend>Data do cenário</legend><div className="simple-presets">{dates.map(d=><button key={d} aria-pressed={d===chosenDate} onClick={()=>setTerm(d)}>{date(d)}</button>)}</div></fieldset>
- <fieldset><legend>Ideia que quer comparar</legend><div className="simple-presets"><button aria-pressed={direction==='CALL'} onClick={()=>setDirection('CALL')}>Alta · CALL</button><button aria-pressed={direction==='PUT'} onClick={()=>setDirection('PUT')}>Queda · PUT</button></div></fieldset>
+ <label className="expiry-choice">Data do cenário<select value={chosenDate} onChange={e=>setTerm(e.target.value)}>{dates.map(d=><option key={d} value={d}>{date(d)}</option>)}</select></label>
+ <fieldset><legend>Ideia que quer comparar</legend><div className="simple-presets"><button aria-pressed={direction==='CALL'} onClick={()=>setDirection('CALL')}>Acho que sobe</button><button aria-pressed={direction==='PUT'} onClick={()=>setDirection('PUT')}>Acho que cai</button></div></fieldset>
  <div aria-live="polite" aria-atomic="true" className="comparison-summary">
  <h3>Com {money(amount)}, até {date(chosenDate)}</h3>
  {!chosen?<p>{base.minimum===null?'Não há série desta direção e data na base. Isso não significa que ela não exista no mercado.':`Ainda não cabe: a opção mais barata custa ${money(base.minimum)}. Faltam ${money(base.minimum-amount)}.`}</p>:<>
@@ -38,7 +38,7 @@ export function BudgetExplorer({stock,options,budget,expiry,onApply}:{stock:Stoc
  </>}
  </div>
  <p><b>Mais dinheiro não multiplica o resultado aqui.</b> Mantemos 100 unidades. Se a série escolhida continuar igual, o resultado também fica igual e só aumenta a sobra. Se outra série passar a caber, strike, custo e resultado podem mudar.</p>
- <p className="disclaimer">Cada prazo pode selecionar outra série. Os preços são de datas distintas ou ilustrativos: esta comparação não isola o efeito do tempo. Só há as datas desta base; não calculamos venda antecipada.</p>
+ <p className="disclaimer">Cada prazo pode selecionar outra série e outro strike: esta comparação não isola o efeito do tempo. Usamos os últimos negócios do mesmo pregão, que podem ter ocorrido em horários diferentes. Só há as datas desta base; não calculamos venda antecipada.</p>
  <button className="secondary-button" disabled={!chosen} onClick={()=>onApply(amount,chosenDate)}>Usar este valor e prazo</button><small>A direção será escolhida na próxima etapa. Nenhuma aplicação real é feita.</small>
  </details>;
 }

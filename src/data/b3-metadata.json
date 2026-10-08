@@ -1,0 +1,14 @@
+{
+  "tradeDate": "2026-10-02",
+  "asOf": "2026-10-05",
+  "sourceUrl": "https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D02102026.ZIP",
+  "count": 1897,
+  "excluded": {
+    "expired": 149,
+    "unsupported": 0,
+    "noPrice": 0
+  },
+  "coverage": "Séries com negociação no pregão; não é o cadastro completo de séries autorizadas. Sem cotações em tempo real.",
+  "sha256": "e9d23a929b97f0ded150f6fdfd4d5c2ff6926702ad286bee6b4ef250acf61a3a",
+  "layoutUrl": "https://b3.com.br/data/files/C8/F3/08/B4/297BE410F816C9E492D828A8/SeriesHistoricas_Layout.pdf"
+}
