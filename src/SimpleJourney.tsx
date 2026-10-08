@@ -30,6 +30,8 @@ function restore():Draft {
 
 export default function SimpleJourney(){
  const [draft,setDraft]=useState<Draft>(restore), [storageError,setStorageError]=useState(false);
+ const [opening,setOpening]=useState(true);
+ useEffect(()=>{const timer=window.setTimeout(()=>setOpening(false),1800);return()=>window.clearTimeout(timer);},[]);
  const heading=useRef<HTMLElement>(null);
  const patch=(v:Partial<Draft>)=>setDraft(d=>({...d,...(['ticker','expiry','direction','budget'].some(k=>k in v)?{selected:''}:{}),...v}));
  const stock=stocks.find(s=>s.ticker===draft.ticker)!;
@@ -53,6 +55,7 @@ export default function SimpleJourney(){
  useEffect(()=>{window.scrollTo({top:0,behavior:'instant'});heading.current?.focus({preventScroll:true});history.replaceState(null,'',`#${routes[step]}`);if(draft.step!==step)setDraft(d=>({...d,step}));},[step,draft.step]);
  useEffect(()=>{const back=()=>{const i=routes.indexOf(location.hash.slice(1));if(i>=0)patch({step:i});};window.addEventListener('popstate',back);return()=>window.removeEventListener('popstate',back);},[]);
  const unavailable=<div className="translation-card"><h2>{selection.minimum===null?'Sem opção nesta combinação':'Esse valor não cobre a simulação'}</h2><p>{selection.minimum===null?'A base não tem uma série para esta direção e esta data. Escolha outro prazo ou reveja sua visão.':`A posição didática tem 100 unidades. O menor custo disponível é ${money(selection.minimum)}; seu limite é ${money(budget)}.`}</p><button className="xp-primary" onClick={()=>go(1)}>Ajustar valor ou prazo</button><button className="secondary-button" onClick={()=>go(2)}>Rever alta ou queda</button></div>;
+ if(opening)return <main className="pulse-opening" aria-label="Boas-vindas ao XP Pulse"><div className="opening-brand"><span>XP</span><b>PULSE</b></div><svg className="opening-wave" viewBox="0 0 320 90" aria-hidden="true"><path d="M0 45 H90 L115 45 L135 15 L155 75 L175 30 L195 45 H320"/></svg><h1>Sua próxima descoberta começa aqui.</h1><p>Explore cenários. Entenda suas escolhas.</p><button onClick={()=>setOpening(false)}>Começar agora</button><small>Simulação educacional · nenhum dinheiro real</small></main>;
  return <main><div className="ambient"/><div className="app-shell simple-journey">
  <header className="xp-header"><button className="logo logo-home" aria-label="XP Pulse — voltar ao início" onClick={()=>go(0)}><span>XP</span><b>PULSE</b></button><span className="simple-count">{step+1} de 6 · {labels[step]}</span></header>
  <div className="simple-progress" aria-label={`Etapa ${step+1} de 6: ${labels[step]}`}>{labels.map((l,i)=><i key={l} className={i<=step?'filled':''}/>)}</div>
