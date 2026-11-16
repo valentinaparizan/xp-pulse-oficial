@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { payoff, optionCost, breakEven, riskMetrics } from './optionsMath.ts';
 import { pulseAccounting } from './pulseAccounting.ts';
 import { bestChoice, breakEvenDistance } from './pulseSelection.ts';
+import { historicalReplays, historicalOpportunity, availableHistoricalOpportunities, historicalOutcome, historicalCDIRate } from './historicalReplay.ts';
 import { parseCotahist } from './cotahist.ts';
 import { selectOptions, availableExpiries } from './optionFilters.ts';
 import { journeyAvailability, safeJourneyStep } from './journey.ts';
@@ -205,4 +206,96 @@ test('previsão de subida e preço sem subida não são confundidos com lucro na
   const atStart = payoff(b3call,19);
   assert.equal(atStart.result,-142);
   assert.equal(scenarioMovement(19,19),'flat');
+});
+
+
+test('reconstituição histórica: todas as entradas são anteriores aos vencimentos de 2024/2025 e possuem fontes', () => {
+  assert.equal(historicalReplays.length,5);
+  assert.deepEqual([...new Set(historicalReplays.map(row=>row.entryDate.slice(0,4)))].sort(), ['2024','2025']);
+  assert.equal(new Set(historicalReplays.map(row=>row.id)).size,historicalReplays.length);
+  for(const row of historicalReplays){
+    assert.ok(row.entryDate < row.expiry);
+    assert.ok(row.expiry < '2026-11-16');
+    assert.ok(row.spotEntry > 0 && row.spotExpiry > 0);
+    assert.ok(row.cdiSourceUrl.startsWith('https://'));
+    assert.ok(row.cdiBusinessDays > 0);
+    assert.ok(Number.isFinite(historicalCDIRate(row)));
+    for(const side of ['up','down'] as const){
+      const q=row.options[side];
+      assert.ok(q.premium > 0 && q.strike > 0);
+      assert.ok(q.sourceUrl.startsWith('https://opcoes.net.br/'));
+    }
+  }
+});
+
+test('Petrobras outubro 2025: PUT ganha com queda observada, CALL perde com a mesma queda', () => {
+  const row=historicalReplays.find(r=>r.id==='petro-out-2025')!;
+  const opportunity=historicalOpportunity(row,200)!;
+  const put=historicalOutcome(opportunity,'down',200);
+  const call=historicalOutcome(opportunity,'up',200);
+  assert.equal(row.spotEntry,30.23);
+  assert.equal(row.spotExpiry,29.73);
+  assert.equal(put.choice.original.ticker,'PETRV321');
+  assert.equal(put.choice.used,192);
+  assert.equal(put.choice.remaining,8);
+  assert.equal(put.optionResult.value,288);
+  assert.equal(put.accounting.optionNetResult,96);
+  assert.equal(put.matchedDirection,true);
+  assert.equal(put.accounting.hypotheticalSupplement,0);
+  assert.equal(put.accounting.fixedIncomeNetResult,.02);
+  assert.equal(put.accounting.simulatedTotal,296.02);
+  assert.equal(call.choice.original.ticker,'PETRJ321');
+  assert.equal(call.accounting.optionNetResult,-153);
+  assert.equal(call.matchedDirection,false);
+  assert.ok(call.accounting.hypotheticalSupplement > 0);
+});
+
+test('Itaú outubro 2025: CALL tem lucro teórico com alta observada', () => {
+  const o=historicalOpportunity(historicalReplays.find(x=>x.id==='itau-out-2025')!,200)!;
+  const result=historicalOutcome(o,'up',200);
+  assert.equal(result.choice.original.ticker,'ITUBJ400');
+  assert.equal(result.choice.used,162);
+  assert.equal(result.choice.remaining,38);
+  assert.equal(result.optionResult.value,176);
+  assert.equal(result.accounting.optionNetResult,14);
+  assert.equal(result.matchedDirection,true);
+  assert.equal(result.accounting.hypotheticalSupplement,0);
+  assert.equal(result.accounting.simulatedTotal,214.10);
+});
+
+test('Petrobras outubro 2024: a operação PUT também tem lucro com dado passado', () => {
+  const o=historicalOpportunity(historicalReplays.find(x=>x.id==='petro-out-2024')!,200)!;
+  const result=historicalOutcome(o,'down',200);
+  assert.equal(result.choice.original.ticker,'PETRV419');
+  assert.equal(result.choice.used,192);
+  assert.equal(result.choice.remaining,8);
+  assert.equal(result.optionResult.value,280);
+  assert.equal(result.accounting.optionNetResult,88);
+  assert.equal(result.accounting.simulatedTotal,288.01);
+});
+
+test('Vale e B3 também apresentam contratos históricos acessíveis para subida e queda', () => {
+  for(const ticker of ['VALE3','B3SA3']){
+    const available=availableHistoricalOpportunities(ticker,200);
+    assert.equal(available.length,1);
+    const up=historicalOutcome(available[0],'up',200);
+    const down=historicalOutcome(available[0],'down',200);
+    assert.equal(up.matchedDirection,true);
+    assert.equal(down.matchedDirection,false);
+    assert.ok(up.accounting.optionNetResult>0);
+    assert.ok(down.accounting.optionNetResult<0);
+  }
+});
+
+test('o histórico não depende da direção escolhida nem oferece resultados futuros sorteados', () => {
+  const selected=historicalOpportunity(historicalReplays.find(x=>x.id==='petro-out-2025')!,200)!;
+  assert.equal(historicalOutcome(selected,'up',200).stockMovement,
+    historicalOutcome(selected,'down',200).stockMovement);
+  assert.equal(selected.spotExpiry,29.73);
+  const active=readFileSync(new URL('../PulseJourney.tsx', import.meta.url),'utf8');
+  assert.ok(active.includes('historicalOutcome(chosen,direction,budget)'));
+  assert.ok(active.includes('StockFactorsExplorer'));
+  assert.ok(active.includes('readOnly protection='));
+  assert.ok(!active.includes('generateAutomaticScenario'));
+  assert.ok(!active.includes('PriceScenarioField'));
 });
