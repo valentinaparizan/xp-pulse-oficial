@@ -202,13 +202,30 @@ export default function PulseJourney() {
           <h1>Seu resultado simulado</h1>
           <p className="lead">Altere o preço da ação no gráfico para experimentar outros resultados.</p>
           <div className="pulse-result-card">
-            <small>{usedProtection ? 'RESULTADO COM PISO HIPOTÉTICO DE CDI' : 'ESTRATÉGIA ACIMA DO PISO HIPOTÉTICO'}</small>
+            <small>SEU VALOR FINAL NA SIMULAÇÃO</small>
             <strong>{money(totalWithFictionalFloor)}</strong>
-            <span>Valor inicial de {money(budget)} + {money(round(totalWithFictionalFloor - budget))} de rendimento simulado.</span>
-            {usedProtection && accounting && <span>Esse total inclui {money(accounting.hypotheticalSupplement)} de complemento fictício: ele não foi gerado pela renda fixa nem possui financiamento definido.</span>}
+            <span>Você começou com {money(budget)} e teria {money(round(totalWithFictionalFloor - budget))} de rendimento neste cenário fictício.</span>
           </div>
-          <div className="pulse-panel">
-            <h2>Entenda seus valores</h2>
+          <div className="pulse-choice-comparison" aria-label="Comparação do resultado da opção com o CDI hipotético">
+            <div className={`pulse-choice-card ${!usedProtection ? 'is-selected' : ''}`}>
+              <span className="pulse-choice-title">Quanto a opção rendeu? <HelpBubble title="Resultado da opção">Este é o lucro ou prejuízo da opção isolada, descontando quanto custou comprá-la. Se não houve lucro, mostramos “Sem lucro”; o valor exato da perda está em “Entender a conta”.</HelpBubble></span>
+              <strong>{accounting && accounting.optionNetResult > 0 ? '+' + money(accounting.optionNetResult) : 'Sem lucro'}</strong>
+              <small>{accounting && accounting.optionNetResult > 0 ? 'Ganho com sua previsão, antes de taxas e impostos.' : 'A opção não compensou neste cenário.'}</small>
+              {!usedProtection && <span className="pulse-choice-tag">Resultado da estratégia aplicado</span>}
+            </div>
+            <div className={`pulse-choice-card ${usedProtection ? 'is-selected' : ''}`}>
+              <span className="pulse-choice-title">Quanto renderia a 100% do CDI? <HelpBubble title="CDI na simulação">É quanto todo o valor inicial renderia na hipótese de 100% do CDI. Usamos uma taxa ilustrativa de 1,2% ao mês, não a taxa real de hoje. Esse valor NÃO foi necessariamente produzido pela parte aplicada em renda fixa; a proteção ainda não tem financiamento.</HelpBubble></span>
+              <strong>+{money(accounting?.hypotheticalFloorGain ?? 0)}</strong>
+              <small>Referência fictícia para o período escolhido.</small>
+              {usedProtection && <span className="pulse-choice-tag">Rendimento mínimo aplicado nesta simulação</span>}
+            </div>
+          </div>
+          <p className="pulse-choice-note">{usedProtection
+            ? 'Neste cenário, a opção não superou o rendimento mínimo imaginado para o XP Pulse. Por isso, usamos o resultado hipotético de 100% do CDI.'
+            : 'Neste cenário, a estratégia superou a referência de 100% do CDI. O total também considera qualquer pequena sobra aplicada à renda fixa.'}</p>
+          <WhatIfChart stock={stock} option={strategy.position} options={chartOptions} budget={budget} price={chosenPrice} onPrice={setPrice} onExpiry={() => {}} protection={{budget, cash: strategy.remaining, rate}}/>
+          <details className="pulse-panel pulse-result-details">
+            <summary>Entender a conta e os preços</summary>
             <p className="pulse-info-intro">Toque nos pontos de interrogação para entender cada número.</p>
             <dl className="pulse-facts">
               <div><dt>Preço inicial da ação <HelpBubble title="Preço inicial da ação">Preço histórico da {stock.name} registrado em {date(stock.sourceDate)}. É o ponto de partida da simulação; não é a cotação de hoje.</HelpBubble></dt><dd>{money(stock.price)}</dd></div>
@@ -220,8 +237,8 @@ export default function PulseJourney() {
               <div><dt>Piso hipotético de 100% do CDI <HelpBubble title="Piso hipotético de 100% do CDI">É o investimento inicial acrescido de uma taxa ilustrativa de 1,2% ao mês durante {chosen.days} dias. Não usamos a taxa CDI de mercado. Essa remuneração é uma hipótese do projeto, sem garantia real.</HelpBubble></dt><dd>{money(accounting?.hypotheticalFloor ?? 0)}</dd></div>
             </dl>
             <p className="pulse-accounting-footnote">O valor final simulado é a soma do valor antes da proteção com o complemento fictício, quando necessário. A viabilidade dessa proteção ainda precisa ser estudada.</p>
-          </div>
-          <WhatIfChart stock={stock} option={strategy.position} options={chartOptions} budget={budget} price={chosenPrice} onPrice={setPrice} onExpiry={() => {}} protection={{budget, cash: strategy.remaining, rate}}/>
+          </details>
+
           <div className="pulse-protection-note"><ShieldCheck size={18}/><span>O gráfico preservado mostra a opção isolada e o resultado acadêmico com piso fictício. O complemento necessário para alcançar esse piso não está financiado. No mercado real, a compra de opções pode perder todo o prêmio.</span></div>
           <details className="pulse-technical"><summary>Como chegamos ao resultado?</summary>
             <p>A simulação compra {strategy.position.contractSize.toLocaleString('pt-BR')} unidades históricas da série {strategy.original.ticker}, por {money(strategy.used)}. O restante, {money(strategy.remaining)}, vai para renda fixa.</p>
