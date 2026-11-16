@@ -171,11 +171,9 @@ export default function PulseJourney() {
             <button type="button" aria-pressed={direction === 'up'} className={direction === 'up' ? 'active' : ''} onClick={() => { if (direction !== 'up') { setDirection('up'); setScenario(null); } }}><ArrowUpRight size={30}/><strong>Subida</strong></button>
             <button type="button" aria-pressed={direction === 'down'} className={direction === 'down' ? 'active' : ''} onClick={() => { if (direction !== 'down') { setDirection('down'); setScenario(null); } }}><ArrowDownRight size={30}/><strong>Queda</strong></button>
           </div>
-          <div className="pulse-simulation-method">
-            <strong>Como funciona a simulação?</strong>
-            <p>Você faz a previsão de subida ou queda. Em seguida, o XP Pulse sorteia um movimento de mercado hipotético, <b>independente da sua escolha</b>. Assim, a direção pode se confirmar ou não, e a opção pode ter lucro ou prejuízo.</p>
-            <p>O preço futuro ainda não é conhecido. Para ensinar como o risco funciona, usamos um modelo probabilístico ilustrativo, com volatilidade anual assumida de {(ASSUMED_ANNUAL_VOLATILITY * 100).toLocaleString('pt-BR')}% — não uma volatilidade medida ou uma previsão. O resultado é apenas uma possibilidade, não um retorno real.</p>
-          </div>
+          <p className="pulse-simulation-method">
+            O preço futuro é desconhecido. O simulador gerará um cenário hipotético <strong>independente da sua escolha</strong>: sua previsão poderá acertar ou errar. <HelpBubble title="Como o cenário é gerado?">Usamos um sorteio probabilístico ilustrativo, com volatilidade anual assumida de {(ASSUMED_ANNUAL_VOLATILITY * 100).toLocaleString('pt-BR')}%, não medida nem calibrada com preços históricos. O resultado não é previsão, cotação real ou garantia de lucro. Os contratos e os preços iniciais da B3 são históricos.</HelpBubble>
+          </p>
           <div className="pulse-panel">
             <h2>Sua simulação</h2>
             <dl className="pulse-facts">
