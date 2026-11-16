@@ -23,17 +23,21 @@ export function pulseAccounting(input: PulseAccountingInput) {
   }
   const optionNetResult = round(optionValueAtMaturity - optionAmount);
   const fixedIncomeAtMaturity = round(fixedIncomeAmount * (1 + simulatedRate));
+  const fixedIncomeNetResult = round(fixedIncomeAtMaturity - fixedIncomeAmount);
   const economicValueAtMaturity = round(optionValueAtMaturity + fixedIncomeAtMaturity);
   const hypotheticalFloor = round(principal * (1 + simulatedRate));
   const hypotheticalSupplement = round(Math.max(0, hypotheticalFloor - economicValueAtMaturity));
   const simulatedTotal = round(economicValueAtMaturity + hypotheticalSupplement);
+  const totalNetResult = round(simulatedTotal - principal);
   return {
     optionNetResult,
     fixedIncomeAtMaturity,
+    fixedIncomeNetResult,
     economicValueAtMaturity,
     hypotheticalFloor,
     hypotheticalSupplement,
     simulatedTotal,
+    totalNetResult,
     floorApplies: hypotheticalSupplement > 0,
     hypotheticalFloorGain: round(hypotheticalFloor - principal),
   };
