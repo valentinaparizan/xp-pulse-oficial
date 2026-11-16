@@ -3,12 +3,13 @@ import type { Option, Stock } from '../types/market';
 import { payoff, breakEven, optionCost } from '../utils/optionsMath';
 import { selectOptions, availableExpiries } from '../utils/optionFilters';
 import { money, date } from '../utils/format';
+import { pulseAccounting } from '../utils/pulseAccounting';
 
 export function WhatIfChart({stock,option,options,budget,price,onPrice,onExpiry,protection}:{stock:Stock;option:Option;options:Option[];budget:number;price:number;onPrice:(price:number)=>void;onExpiry:(expiry:string)=>void;protection?:{budget:number;cash:number;rate:number}}){
  const id=useId(), maximum=Math.round(stock.price*200)/100;
  const equilibrium=breakEven(option), cost=optionCost(option);
  const points=[...new Set([0,maximum,option.strike,equilibrium].filter(v=>v>=0&&v<=maximum))].sort((a,b)=>a-b);
- const protectedGain=(p:number)=>protection?Math.round((Math.max(protection.budget*(1+protection.rate),payoff(option,p).value+protection.cash*(1+protection.rate))-protection.budget)*100)/100:null;
+ const protectedGain=(p:number)=>protection?pulseAccounting({principal:protection.budget,optionAmount:cost,optionValueAtMaturity:payoff(option,p).value,fixedIncomeAmount:protection.cash,simulatedRate:protection.rate}).totalNetResult:null;
  const results=points.map(p=>payoff(option,p).result);
  const protectedResults=protection?points.map(p=>protectedGain(p)!):[];
  const allResults=[...results,...protectedResults];
