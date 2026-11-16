@@ -190,5 +190,53 @@
     "sourceDate": "2026-10-02",
     "sourceUrl": "https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D02102026.ZIP",
     "dataType": "b3_snapshot"
+  },
+  {
+    "ticker": "CIEL3",
+    "name": "Cielo (histórico)",
+    "price": 4.7,
+    "bull": [
+      {
+        "icon": "💳",
+        "title": "Mais pagamentos eletrônicos",
+        "short": "Pode aumentar o volume processado.",
+        "detail": "Com maior volume de pagamentos em cartões e outros meios eletrônicos, uma empresa adquirente poderia elevar receitas se suas tarifas e margens fossem mantidas. Concorrência e custos também influenciam."
+      },
+      {
+        "icon": "📈",
+        "title": "Melhora das margens",
+        "short": "Pode reforçar a expectativa de resultados.",
+        "detail": "Custos menores e melhor eficiência operacional podem aumentar o lucro esperado e o caixa gerado. O mercado pode já ter antecipado essa melhora."
+      },
+      {
+        "icon": "🤝",
+        "title": "Novos contratos",
+        "short": "Podem ajudar a ampliar os serviços.",
+        "detail": "Mais comerciantes atendidos ou serviços adicionais podem elevar receitas, desde que os custos de aquisição e a retenção de clientes compensem."
+      }
+    ],
+    "bear": [
+      {
+        "icon": "⚖️",
+        "title": "Concorrência mais intensa",
+        "short": "Pode pressionar taxas cobradas.",
+        "detail": "Se concorrentes reduzirem preços ou ampliarem benefícios, a empresa pode ter de aceitar margens menores para manter clientes."
+      },
+      {
+        "icon": "📉",
+        "title": "Volume de vendas menor",
+        "short": "Pode reduzir transações processadas.",
+        "detail": "Atividade econômica fraca pode reduzir o volume de pagamentos processados, diminuindo receitas relacionadas ao uso dos serviços."
+      },
+      {
+        "icon": "💸",
+        "title": "Custos de operação maiores",
+        "short": "Podem prejudicar a rentabilidade.",
+        "detail": "Aumentos de despesas de tecnologia, segurança, financiamento e atendimento podem pressionar a margem, especialmente sem crescimento proporcional da receita."
+      }
+    ],
+    "sourceDate": "2024-01-15",
+    "sourceUrl": "https://opcoes.net.br/CIELM533",
+    "dataType": "historical-archived-web"
   }
 ]
