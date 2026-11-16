@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { payoff, optionCost, breakEven, riskMetrics } from './optionsMath.ts';
 import { pulseAccounting } from './pulseAccounting.ts';
+import { bestChoice, breakEvenDistance } from './pulseSelection.ts';
 import { parseCotahist } from './cotahist.ts';
 import { selectOptions, availableExpiries } from './optionFilters.ts';
 import { journeyAvailability, safeJourneyStep } from './journey.ts';
@@ -64,4 +65,41 @@ test('Pulse: 100% em renda fixa não cria complemento quando o piso usa a mesma 
 });
 test('Pulse: composição inválida não permite inventar recursos fora do principal', () => {
   assert.throws(() => pulseAccounting({principal:100,optionAmount:100,optionValueAtMaturity:0,fixedIncomeAmount:50,simulatedRate:.03}));
+});
+
+
+test('Pulse: preço de equilíbrio próximo tem prioridade sobre gastar 100% em opção muito distante', () => {
+  const close = { ...call, ticker:'CLOSE', strike:32, premium:.42 };
+  const remote = { ...call, ticker:'REMOTE', strike:85, premium:.01 };
+  const selected = bestChoice([remote, close], 100, 32);
+  assert.equal(selected?.original.ticker, 'CLOSE');
+  assert.equal(selected?.lots, 2);
+  assert.equal(selected?.position.contractSize, 200);
+  assert.equal(selected?.used, 84);
+  assert.equal(selected?.remaining, 16);
+  assert.ok(breakEvenDistance(close,32) < breakEvenDistance(remote,32));
+});
+test('Pulse: em pontos de equilíbrio iguais, usa mais orçamento em opções e sobra vai para renda fixa', () => {
+  const a = { ...call, ticker:'A', strike:32, premium:.42 };
+  const b = { ...call, ticker:'B', strike:32.12, premium:.30 };
+  assert.equal(breakEvenDistance(a,32),breakEvenDistance(b,32));
+  const selected = bestChoice([a,b],100,32);
+  assert.equal(selected?.original.ticker,'B');
+  assert.equal(selected?.used,90);
+  assert.equal(selected?.remaining,10);
+  const returned = pulseAccounting({principal:100,optionAmount:selected!.used,optionValueAtMaturity:120,fixedIncomeAmount:selected!.remaining,simulatedRate:.03});
+  assert.equal(returned.fixedIncomeAtMaturity,10.3);
+  assert.equal(returned.simulatedTotal,130.3);
+});
+test('Pulse: critério de proximidade funciona também para alternativas de queda', () => {
+  const near = { ...call, ticker:'NEAR_PUT', type:'PUT' as const, strike:32, premium:.42 };
+  const far = { ...call, ticker:'FAR_PUT', type:'PUT' as const, strike:10, premium:.01 };
+  const selected = bestChoice([far,near],100,32);
+  assert.equal(selected?.original.ticker,'NEAR_PUT');
+  assert.equal(selected?.position.contractSize,200);
+});
+test('Pulse: nunca compra bloco que exceda orçamento e não seleciona se não existir opção acessível', () => {
+  assert.equal(bestChoice([{ ...call,premium:1.5 }],100,32),null);
+  assert.equal(bestChoice([call],-100,32),null);
+  assert.equal(bestChoice([call],100,0),null);
 });

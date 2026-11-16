@@ -5,7 +5,8 @@ import optionData from './data/options.json';
 import metadata from './data/b3-metadata.json';
 import type { Option, Stock } from './types/market';
 import { validOption } from './utils/optionFilters';
-import { optionCost, payoff, breakEven } from './utils/optionsMath';
+import { payoff, breakEven } from './utils/optionsMath';
+import { bestChoice, type Choice } from './utils/pulseSelection';
 import { money, date } from './utils/format';
 import { pulseAccounting } from './utils/pulseAccounting';
 import { WhatIfChart } from './components/WhatIfChart';
@@ -15,7 +16,6 @@ const stocks = stockData as Stock[];
 const historicalOptions = (optionData as Option[]).filter(validOption);
 const DEMO_CDI_MONTHLY_RATE = 0.012; // Fictitious 100%-CDI reference, not a current CDI quotation.
 type Direction = 'up' | 'down';
-type Choice = { original: Option; position: Option; lots: number; used: number; remaining: number };
 type Opportunity = { expiry: string; days: number; rise: Choice; fall: Choice; distance: number };
 
 function round(value: number) { return Math.round((value + Number.EPSILON) * 100) / 100; }
@@ -23,22 +23,6 @@ function daysUntil(isoDate: string) {
   const today = new Date();
   const start = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
   return Math.round((Date.parse(isoDate + 'T00:00:00Z') - start) / 86400000);
-}
-function bestChoice(series: Option[], budget: number, stockPrice: number): Choice | null {
-  const candidates = series.map(original => {
-    const lotCost = optionCost(original);
-    if (lotCost <= 0 || lotCost > budget) return null;
-    const lots = Math.floor((budget + 0.0000001) / lotCost);
-    if (lots < 1) return null;
-    const used = round(lotCost * lots);
-    if (used > budget) return null;
-    return { original, position: { ...original, contractSize: original.contractSize * lots }, lots, used, remaining: round(budget - used) };
-  }).filter((candidate): candidate is Choice => candidate !== null);
-  candidates.sort((a, b) => a.remaining - b.remaining
-    || Math.abs(a.original.strike - stockPrice) - Math.abs(b.original.strike - stockPrice)
-    || (b.original.trades || 0) - (a.original.trades || 0)
-    || a.original.ticker.localeCompare(b.original.ticker));
-  return candidates[0] || null;
 }
 function findOpportunities(stock: Stock, budget: number, months: number): Opportunity[] {
   if (!Number.isFinite(budget) || budget < 1 || budget > 1000000) return [];
@@ -151,11 +135,16 @@ export default function PulseJourney() {
 
         {step === 3 && <>
           <div className="eyebrow">{stock.name} · {money(budget)} · cerca de {months} {months === 1 ? 'mês' : 'meses'}</div>
-          <h1>Suas oportunidades</h1>
+          <div className="pulse-heading-help">
+            <h1>Suas oportunidades</h1>
+            <HelpBubble title="Como escolhemos as opções?">
+              Primeiro, procuramos opções que precisem de uma subida ou queda menor para começar a gerar lucro, comparando o preço de equilíbrio com o preço histórico da ação. Depois, para a opção selecionada, compramos o máximo de unidades que cabe no seu orçamento. O que sobrar vai para a renda fixa. Isso não garante lucro nem prevê o movimento do mercado.
+            </HelpBubble>
+          </div>
           <p className="lead">Datas e contratos de opções que constam da base histórica da B3. Escolha o prazo que preferir.</p>
           {opportunities.length === 0 ? <div className="pulse-panel">
             <h2>Nenhuma oportunidade nessa combinação</h2>
-            <p>A base histórica não contém, nesse valor e prazo, opções para os dois movimentos. Você pode ajustar seu valor ou escolher outro prazo.</p>
+            <p>A base histórica não contém, nesse valor e prazo, opções acessíveis para subida e queda. Você pode ajustar seu valor ou escolher outro prazo.</p>
             <button className="xp-primary" onClick={() => setStep(2)}>Alterar valor ou prazo</button>
           </div> : <div className="pulse-opportunities">{opportunities.map((item, index) => <button className="pulse-opportunity" type="button" key={item.expiry} onClick={() => { setExpiry(item.expiry); setPrice(null); setStep(4); }}>
             <div className="pulse-opportunity-head"><strong>{index === 0 ? 'Mais próxima do seu prazo' : 'Outra data disponível'}</strong><ChevronRight size={18}/></div>
