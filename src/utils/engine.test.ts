@@ -103,3 +103,37 @@ test('Pulse: nunca compra bloco que exceda orçamento e não seleciona se não e
   assert.equal(bestChoice([call],-100,32),null);
   assert.equal(bestChoice([call],100,0),null);
 });
+
+test('resultado líquido total: soma componentes positivos e não soma CDI de referência duas vezes', () => {
+  const rate = Math.pow(1.012, 32 / 30) - 1;
+  const r = pulseAccounting({principal:200,optionAmount:190,optionValueAtMaturity:238,fixedIncomeAmount:10,simulatedRate:rate});
+  assert.equal(r.optionNetResult,48);
+  assert.equal(r.fixedIncomeAtMaturity,10.13);
+  assert.equal(r.fixedIncomeNetResult,.13);
+  assert.equal(r.hypotheticalFloorGain,2.56);
+  assert.equal(r.hypotheticalSupplement,0);
+  assert.equal(r.totalNetResult,48.13);
+  assert.equal(r.simulatedTotal,248.13);
+  assert.equal(r.totalNetResult,r.optionNetResult+r.fixedIncomeNetResult+r.hypotheticalSupplement);
+  assert.equal(r.simulatedTotal,roundForTest(200+r.totalNetResult));
+});
+test('resultado líquido total: perda da opção é compensada SOMENTE por complemento hipotético', () => {
+  const rate = Math.pow(1.012, 32 / 30) - 1;
+  const r = pulseAccounting({principal:200,optionAmount:190,optionValueAtMaturity:0,fixedIncomeAmount:10,simulatedRate:rate});
+  assert.equal(r.optionNetResult,-190);
+  assert.equal(r.fixedIncomeNetResult,.13);
+  assert.equal(r.hypotheticalFloorGain,2.56);
+  assert.equal(r.hypotheticalSupplement,192.43);
+  assert.equal(r.totalNetResult,2.56);
+  assert.equal(r.simulatedTotal,202.56);
+  assert.equal(r.totalNetResult,roundForTest(r.optionNetResult+r.fixedIncomeNetResult+r.hypotheticalSupplement));
+});
+test('resultado líquido total: aporte totalmente em opções e perda integral não vira juros de renda fixa', () => {
+  const r = pulseAccounting({principal:100,optionAmount:100,optionValueAtMaturity:0,fixedIncomeAmount:0,simulatedRate:.03});
+  assert.equal(r.optionNetResult,-100);
+  assert.equal(r.fixedIncomeNetResult,0);
+  assert.equal(r.hypotheticalSupplement,103);
+  assert.equal(r.totalNetResult,3);
+  assert.equal(r.simulatedTotal,103);
+});
+function roundForTest(n:number){return Math.round((n+Number.EPSILON)*100)/100;}
