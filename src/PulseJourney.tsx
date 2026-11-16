@@ -1,4 +1,4 @@
-import { useId, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useId, useMemo, useState, type ReactNode } from 'react';
 import { ArrowLeft, ArrowUpRight, ArrowDownRight, ChevronRight, ShieldCheck } from 'lucide-react';
 import stockData from './data/stocks.json';
 import optionData from './data/options.json';
@@ -9,6 +9,7 @@ import { payoff, breakEven } from './utils/optionsMath';
 import { bestChoice, type Choice } from './utils/pulseSelection';
 import { money, date } from './utils/format';
 import { pulseAccounting } from './utils/pulseAccounting';
+import { suggestedFinalPrice, parseScenarioPrice, formatScenarioPrice, scenarioMovement, scenarioChangePercent } from './utils/scenarioPrice';
 import { WhatIfChart } from './components/WhatIfChart';
 import './pulse.css';
 
@@ -55,6 +56,34 @@ function HelpBubble({ title, children }: { title: string; children: ReactNode })
   </span>;
 }
 
+function PriceScenarioField({ value, onChange, onValidityChange }: { value: number; onChange: (price: number) => void; onValidityChange?: (valid: boolean) => void }) {
+  const id = useId();
+  const [focused, setFocused] = useState(false);
+  const [draft, setDraft] = useState(() => formatScenarioPrice(value));
+  useEffect(() => { if (!focused) setDraft(formatScenarioPrice(value)); }, [value, focused]);
+  const valid = parseScenarioPrice(draft) !== null;
+  return <div className="pulse-scenario-input">
+    <label htmlFor={id}>Preço hipotético da ação no vencimento</label>
+    <div className="pulse-scenario-input-control"><span>R$</span><input id={id} aria-invalid={!valid} type="text" inputMode="decimal" value={draft}
+      onFocus={() => setFocused(true)}
+      onChange={event => {
+        const entered = event.target.value;
+        setDraft(entered);
+        const parsed = parseScenarioPrice(entered);
+        onValidityChange?.(parsed !== null);
+        if (parsed !== null) onChange(parsed);
+      }}
+      onBlur={() => {
+        setFocused(false);
+        setDraft(formatScenarioPrice(value));
+        onValidityChange?.(true);
+      }}
+      aria-describedby={id + '-help'}/></div>
+    <small id={id + '-help'}>Você pode digitar o valor exato, por exemplo 20,90. É uma hipótese, não a cotação futura.</small>
+    {!valid && <p className="field-error" role="alert">Digite um preço válido em reais, com até dois centavos.</p>}
+  </div>;
+}
+
 export default function PulseJourney() {
   const [step, setStep] = useState(0);
   const [ticker, setTicker] = useState('PETR4');
@@ -63,13 +92,18 @@ export default function PulseJourney() {
   const [expiry, setExpiry] = useState('');
   const [direction, setDirection] = useState<Direction>('up');
   const [price, setPrice] = useState<number | null>(null);
+  const [scenarioValid, setScenarioValid] = useState(true);
   const budget = Number(amount.replace(',', '.'));
   const validBudget = Number.isFinite(budget) && budget >= 1 && budget <= 1000000;
   const stock = stocks.find(item => item.ticker === ticker) || stocks[0];
   const opportunities = useMemo(() => findOpportunities(stock, budget, months), [stock, budget, months]);
   const chosen = opportunities.find(item => item.expiry === expiry) || null;
   const strategy = chosen ? (direction === 'up' ? chosen.rise : chosen.fall) : null;
-  const chosenPrice = price === null ? stock.price : price;
+  // No unexplained flat-price scenario: the initial +/-10% is clearly described as illustrative.
+  const chosenPrice = price === null ? suggestedFinalPrice(stock.price, direction) : price;
+  const simulatedMovement = scenarioMovement(stock.price, chosenPrice);
+  const directionMatchesScenario = simulatedMovement === direction;
+  const simulatedPercent = scenarioChangePercent(stock.price, chosenPrice);
   const rate = chosen ? simulatedRate(chosen.days) : 0;
   const optionResult = strategy ? payoff(strategy.position, chosenPrice) : null;
   // Assets and a hypothetical unfunded issuer supplement are distinct.
@@ -85,7 +119,7 @@ export default function PulseJourney() {
   const totalWithFictionalFloor = accounting?.simulatedTotal ?? 0;
   const chartOptions = chosen ? historicalOptions.filter(item => item.underlying === stock.ticker && item.expiry === chosen.expiry && item.type === strategy?.original.type) : [];
   const changeTerms = () => { setExpiry(''); setPrice(null); };
-  const goResult = () => { setPrice(stock.price); setStep(5); };
+  const goResult = () => { if (scenarioValid) setStep(5); };
   const labels = ['Boas-vindas', 'Empresa', 'Valor e prazo', 'Oportunidades', 'Sua previsão', 'Resultado', 'Gráfico'];
 
   return <main className="pulse-v3">
@@ -159,8 +193,26 @@ export default function PulseJourney() {
           <h1>Você acha que vai subir ou cair?</h1>
           <p className="lead">Escolha o movimento que você acredita que vai acontecer até o prazo selecionado.</p>
           <div className="pulse-direction-grid">
-            <button type="button" aria-pressed={direction === 'up'} className={direction === 'up' ? 'active' : ''} onClick={() => setDirection('up')}><ArrowUpRight size={30}/><strong>Subida</strong></button>
-            <button type="button" aria-pressed={direction === 'down'} className={direction === 'down' ? 'active' : ''} onClick={() => setDirection('down')}><ArrowDownRight size={30}/><strong>Queda</strong></button>
+            <button type="button" aria-pressed={direction === 'up'} className={direction === 'up' ? 'active' : ''} onClick={() => { if (direction !== 'up') { setDirection('up'); setPrice(null); setScenarioValid(true); } }}><ArrowUpRight size={30}/><strong>Subida</strong></button>
+            <button type="button" aria-pressed={direction === 'down'} className={direction === 'down' ? 'active' : ''} onClick={() => { if (direction !== 'down') { setDirection('down'); setPrice(null); setScenarioValid(true); } }}><ArrowDownRight size={30}/><strong>Queda</strong></button>
+          </div>
+          <div className="pulse-panel pulse-scenario-panel">
+            <h2>Qual preço final você quer simular?</h2>
+            <p>O preço histórico de {stock.name} é <strong>{money(stock.price)}</strong>, no pregão de {date(stock.sourceDate)}. Para começar, usamos uma {direction === 'up' ? 'alta' : 'queda'} <strong>hipotética de 10%</strong>, que você pode alterar. Isso não é uma previsão de mercado.</p>
+            <div className="pulse-scenario-presets" role="group" aria-label="Variação hipotética da ação">
+              {[5, 10, 20].map(percent => {
+                const value = round(stock.price * (1 + (direction === 'up' ? 1 : -1) * percent / 100));
+                return <button type="button" key={percent} aria-pressed={chosenPrice === value} onClick={() => { setPrice(value); setScenarioValid(true); }}>
+                  {direction === 'up' ? '+' : '−'}{percent}%
+                </button>;
+              })}
+            </div>
+            <PriceScenarioField value={chosenPrice} onChange={setPrice} onValidityChange={setScenarioValid}/>
+            <p className="pulse-scenario-explanation">
+              Neste cenário, a ação {simulatedMovement === 'up' ? 'sobe' : simulatedMovement === 'down' ? 'cai' : 'fica estável'} {Math.abs(simulatedPercent).toLocaleString('pt-BR')}%.
+              {' '}A opção escolhida começa a ter lucro {direction === 'up' ? 'acima' : 'abaixo'} de <strong>{money(breakEven(strategy.original))}</strong> no vencimento.
+            </p>
+            {!directionMatchesScenario && <p className="pulse-scenario-warning" role="status">Este preço simulado não confirma sua previsão de {direction === 'up' ? 'subida' : 'queda'}. Você pode mantê-lo para testar um cenário desfavorável ou escolher outro valor.</p>}
           </div>
           <div className="pulse-panel">
             <h2>Sua simulação</h2>
@@ -183,13 +235,18 @@ export default function PulseJourney() {
             </details>
           </div>
           <div className="pulse-protection-note"><ShieldCheck size={18}/><span>Regra fictícia do projeto: se a estratégia não superar o rendimento de referência, o resultado mínimo simulado será 100% de um CDI hipotético no período.</span></div>
-          <button className="xp-primary" onClick={goResult}>Simular minha estratégia <ChevronRight size={18}/></button>
+          <button className="xp-primary" disabled={!scenarioValid} onClick={goResult}>Simular minha estratégia <ChevronRight size={18}/></button>
         </> : <div className="pulse-panel"><p>Essa data não está mais disponível na seleção. Escolha outra oportunidade.</p><button className="xp-primary" onClick={() => setStep(3)}>Ver oportunidades</button></div>)}
 
         {step === 5 && (chosen && strategy && optionResult && accounting ? <>
           <div className="eyebrow">{stock.name} · {direction === 'up' ? 'Subida' : 'Queda'} · {date(chosen.expiry)}</div>
           <h1>Seu resultado</h1>
           <p className="lead">Quanto você teria ao final da simulação e como chegamos a esse valor.</p>
+          <div className="pulse-scenario-summary">
+            <strong>Cenário testado: {money(stock.price)} → {money(chosenPrice)}</strong>
+            <span>A ação {simulatedMovement === 'up' ? 'subiu' : simulatedMovement === 'down' ? 'caiu' : 'ficou estável'} {Math.abs(simulatedPercent).toLocaleString('pt-BR')}% no cenário escolhido. Sua previsão de {direction === 'up' ? 'subida' : 'queda'} {directionMatchesScenario ? 'acertou a direção' : 'não se confirmou'}.</span>
+            <span>{accounting.optionNetResult > 0 ? 'A opção teria lucro líquido.' : accounting.optionNetResult < 0 ? 'A opção teria prejuízo, mesmo que a direção estivesse correta.' : 'A opção ficaria no ponto de equilíbrio.'} Acertar a direção não garante lucro.</span>
+          </div>
           <div className="pulse-result-card">
             <small>RESULTADO FINAL DA SIMULAÇÃO</small>
             <strong>{money(totalWithFictionalFloor)}</strong>
@@ -237,7 +294,11 @@ export default function PulseJourney() {
         {step === 6 && (chosen && strategy && optionResult && accounting ? <>
           <div className="eyebrow">{stock.name} · {direction === 'up' ? 'Subida' : 'Queda'} · {date(chosen.expiry)}</div>
           <h1>Explore os cenários</h1>
-          <p className="lead">Mova o preço da ação e descubra como seu resultado poderia mudar.</p>
+          <p className="lead">Mova o preço da ação ou digite o preço final para testar o resultado. Esta é uma hipótese, não a cotação futura.</p>
+          <div className="pulse-scenario-chart-input">
+            <PriceScenarioField value={chosenPrice} onChange={setPrice}/>
+            <small>Preço histórico: {money(stock.price)}. Cenário atual: {simulatedPercent > 0 ? '+' : ''}{simulatedPercent.toLocaleString('pt-BR')}%.</small>
+          </div>
           <div className="pulse-chart-figure">
             <span>Valor final do XP Pulse neste cenário fictício</span>
             <strong>{money(totalWithFictionalFloor)}</strong>
