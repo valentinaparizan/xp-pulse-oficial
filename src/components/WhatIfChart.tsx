@@ -5,7 +5,7 @@ import { selectOptions, availableExpiries } from '../utils/optionFilters';
 import { money, date } from '../utils/format';
 import { pulseAccounting } from '../utils/pulseAccounting';
 
-export function WhatIfChart({stock,option,options,budget,price,onPrice,onExpiry,protection}:{stock:Stock;option:Option;options:Option[];budget:number;price:number;onPrice:(price:number)=>void;onExpiry:(expiry:string)=>void;protection?:{budget:number;cash:number;rate:number}}){
+export function WhatIfChart({stock,option,options,budget,price,onPrice,onExpiry,protection,readOnly=false}:{stock:Stock;option:Option;options:Option[];budget:number;price:number;onPrice:(price:number)=>void;onExpiry:(expiry:string)=>void;protection?:{budget:number;cash:number;rate:number};readOnly?:boolean}){
  const id=useId();
  const equilibrium=breakEven(option), cost=optionCost(option);
  // Keep user-entered final prices and break-even levels inside the chart range.
@@ -20,9 +20,9 @@ export function WhatIfChart({stock,option,options,budget,price,onPrice,onExpiry,
  const current=payoff(option,price).result,protectedCurrent=protectedGain(price);
  const dates=availableExpiries(options,stock.ticker,option.type);
  return <section className="what-if" aria-label="Gráfico E se o preço mudasse">
- <h2>E se… o preço fosse diferente?</h2><p>Arraste o preço. O gráfico mostra a opção no vencimento, sem prever o mercado.</p>{protection&&<p><b>Linha amarela:</b> lucro ou prejuízo da opção isolada. <b>Linha azul:</b> resultado do XP Pulse com o piso fictício de CDI e a parcela em renda fixa.</p>}
- {dates.length>1&&<><label htmlFor={`${id}-date`}>Em qual prazo?</label><select id={`${id}-date`} value={option.expiry} onChange={e=>onExpiry(e.target.value)}>{dates.map(d=>{const s=selectOptions(options,stock.ticker,option.type,d,budget,stock.price);return <option key={d} value={d} disabled={!s.affordable.length}>{date(d)}{!s.affordable.length?` · precisa de ${money(s.minimum!)}`:''}</option>})}</select></>}
- <p className="disclaimer">{dates.length===1?'Data escolhida em Suas oportunidades.':'Ao trocar a data, outra série pode ser selecionada; strike e custo também podem mudar.'}</p>
+ <h2>Como o preço afeta o resultado?</h2><p>{readOnly ? 'As curvas mostram possíveis ganhos e perdas em diferentes preços. Os pontos indicam o cenário gerado automaticamente; você não escolhe o resultado.' : 'Arraste o preço. O gráfico mostra a opção no vencimento, sem prever o mercado.'}</p>{protection&&<p><b>Linha amarela:</b> lucro ou prejuízo da opção isolada. <b>Linha azul:</b> resultado do XP Pulse com o piso fictício de CDI e a parcela em renda fixa.</p>}
+ {!readOnly && dates.length>1&&<><label htmlFor={`${id}-date`}>Em qual prazo?</label><select id={`${id}-date`} value={option.expiry} onChange={e=>onExpiry(e.target.value)}>{dates.map(d=>{const s=selectOptions(options,stock.ticker,option.type,d,budget,stock.price);return <option key={d} value={d} disabled={!s.affordable.length}>{date(d)}{!s.affordable.length?` · precisa de ${money(s.minimum!)}`:''}</option>})}</select></>}
+ <p className="disclaimer">{readOnly ? 'O preço final é um cenário probabilístico ilustrativo, gerado de forma independente da sua previsão, não uma cotação futura.' : dates.length===1 ? 'Data escolhida em Suas oportunidades.' : 'Ao trocar a data, outra série pode ser selecionada; strike e custo também podem mudar.'}</p>
  <svg viewBox="0 0 540 245" role="img" aria-labelledby={`${id}-title ${id}-desc`}>
  <title id={`${id}-title`}>Resultado da compra de {option.type} em {date(option.expiry)}</title>
  <desc id={`${id}-desc`}>Preço da ação no eixo horizontal, resultado em reais no vertical. Com ação a {money(price)}, resultado de {money(current)}. Equilíbrio em {money(equilibrium)}. Faixa de preços de zero a {money(maximum)}, não uma previsão.</desc>
@@ -42,9 +42,14 @@ export function WhatIfChart({stock,option,options,budget,price,onPrice,onExpiry,
  <text x="64" y="220" fill="#b8c3c9" fontSize="12">R$ 0</text><text x="504" y="220" textAnchor="end" fill="#b8c3c9" fontSize="12">{money(maximum)}</text>
  <text x="284" y="240" textAnchor="middle" fill="#b8c3c9" fontSize="12">Preço da ação no vencimento</text>
  </svg>
- <label htmlFor={`${id}-price`}>Preço da ação: <b>{money(price)}</b></label><input id={`${id}-price`} type="range" min="0" max={maximum} step="0.01" value={price} onChange={e=>onPrice(Number(e.target.value))} aria-valuetext={`${money(price)}; ${current<0?'prejuízo':'resultado'} de ${money(Math.abs(current))}`}/>
+ {readOnly ? <>
+   <p className="chart-result" role="status">Preço final do cenário simulado: <b>{money(price)}</b> · Resultado líquido da opção: <b>{money(current)}</b>{protection&&protectedCurrent!==null&&<> · Resultado líquido total do XP Pulse fictício: <b>{money(protectedCurrent)}</b></>}</p>
+   <p className="disclaimer">As curvas apresentam o que aconteceria em outros preços. O cenário sorteado e o resultado apresentado na tabela permanecem os mesmos.</p>
+ </> : <>
+   <label htmlFor={`${id}-price`}>Preço da ação: <b>{money(price)}</b></label><input id={`${id}-price`} type="range" min="0" max={maximum} step="0.01" value={price} onChange={e=>onPrice(Number(e.target.value))} aria-valuetext={`${money(price)}; ${current<0?'prejuízo':'resultado'} de ${money(Math.abs(current))}`}/>
  <p className="chart-result" role="status" aria-live="polite">Opção isolada: <b>{money(current)}</b>{protection&&protectedCurrent!==null&&<> · XP Pulse fictício: <b>{money(protectedCurrent)}</b></>}</p>
  <div className="simple-presets"><button onClick={()=>onPrice(option.type==='CALL'?0:maximum)}>Ver maior perda</button>{equilibrium>=0&&equilibrium<=maximum&&<button onClick={()=>onPrice(equilibrium)}>Ver equilíbrio</button>}<button onClick={()=>onPrice(option.type==='CALL'?maximum:0)}>Ver maior ganho da faixa</button></div>
+ </>}
  <p className="disclaimer">Perda máxima do prêmio: {money(cost)}. O maior ganho mostrado vale apenas para este intervalo do gráfico, não é uma promessa ou limite geral de lucro. Valores antes de taxas e tributos; não representam venda antecipada.</p>
  </section>;
 }
