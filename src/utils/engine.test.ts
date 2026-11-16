@@ -396,3 +396,14 @@ test('prazo máximo: episódios curtos se encaixam em todos os horizontes, sem a
     }
   }
 });
+
+test('ajudas contextuais aparecem apenas nos pontos essenciais e explicam riscos e prazo', () => {
+  const active = readFileSync(new URL('../PulseJourney.tsx',import.meta.url),'utf8');
+  for(const help of ['O que significa o prazo?', 'O que muda entre subida e queda?', 'Como calcular o resultado líquido?', 'Como ler o gráfico?']) {
+    assert.ok(active.includes(`<HelpBubble title="${help}">`),help);
+  }
+  assert.ok(active.includes('escolher 1, 3 ou 6 meses não altera a duração real'));
+  assert.ok(active.includes('Sua escolha não altera o movimento'));
+  assert.ok(active.includes('não um ganho garantido'));
+  assert.ok(active.includes('não é um botão para escolher quanto ganhar'));
+});

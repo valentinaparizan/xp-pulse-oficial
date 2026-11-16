@@ -89,7 +89,10 @@ export default function PulseJourney() {
           <label className="money-input"><span>Quanto você quer investir?</span><div>R$ <input aria-label="Valor da simulação" type="text" inputMode="decimal" value={amount} onChange={event => { setAmount(event.target.value); changeTerms(); }}/></div></label>
           <div className="simple-presets">{[20,50,100,200].map(number => <button type="button" key={number} aria-pressed={budget===number} onClick={()=>{setAmount(String(number));changeTerms();}}>{money(number)}</button>)}</div>
           {!validBudget && <p className="field-error" role="alert">Escolha um valor entre R$ 1 e R$ 1.000.000.</p>}
-          <h2>Por quanto tempo você pode esperar?</h2>
+          <div className="pulse-heading-help pulse-heading-help-compact">
+            <h2>Por quanto tempo você pode esperar?</h2>
+            <HelpBubble title="O que significa o prazo?">Escolha quanto tempo você aceitaria esperar, no máximo. O vencimento da opção pode acontecer antes. Nesta amostra educativa, as operações selecionadas duram de 2 a 10 dias; escolher 1, 3 ou 6 meses não altera a duração real do exemplo. O prazo exato aparece na oportunidade.</HelpBubble>
+          </div>
           <p>Escolha o tempo máximo. Buscaremos opções com vencimento dentro desse prazo.</p>
           <div className="pulse-term-grid">{[1,3,6].map(number=><button type="button" key={number} className={months===number?'active':''} aria-pressed={months===number} onClick={()=>{setMonths(number);changeTerms();}}>
             <strong>{number} {number===1?'mês':'meses'}</strong><small>{number===1?'Mais curto':number===3?'Intermediário':'Mais longo'}</small>
@@ -123,7 +126,10 @@ export default function PulseJourney() {
           <h1>Você acha que a ação vai subir ou cair?</h1>
           <p className="lead">Explore os fatores que podem influenciar a ação e escolha o movimento que você acredita que vai acontecer. Depois, a plataforma mostrará o resultado do cenário de referência.</p>
           <StockFactorsExplorer key={stock.ticker} stock={stock}/>
-          <h2 className="pulse-direction-heading">Qual é sua previsão?</h2>
+          <div className="pulse-heading-help pulse-heading-help-compact">
+            <h2 className="pulse-direction-heading">Qual é sua previsão?</h2>
+            <HelpBubble title="O que muda entre subida e queda?">Se você escolher Subida, a simulação usa uma opção de compra (CALL). Para Queda, usa uma opção de venda (PUT). Sua escolha não altera o movimento usado como referência. Mesmo acertando a direção, a opção só dá lucro se o movimento superar o prêmio pago.</HelpBubble>
+          </div>
           <div className="pulse-direction-grid">
             <button type="button" aria-pressed={direction === 'up'} className={direction === 'up' ? 'active' : ''} onClick={() => setDirection('up')}><ArrowUpRight size={30}/><strong>Subida</strong></button>
             <button type="button" aria-pressed={direction === 'down'} className={direction === 'down' ? 'active' : ''} onClick={() => setDirection('down')}><ArrowDownRight size={30}/><strong>Queda</strong></button>
@@ -175,7 +181,7 @@ export default function PulseJourney() {
               <div><dt>Lucro ou prejuízo das opções <HelpBubble title="Lucro da opção">Calculamos o valor intrínseco teórico no vencimento menos o prêmio de referência por {strategy.position.contractSize.toLocaleString('pt-BR')} unidades. É uma conta ilustrativa antes de taxas, sem afirmar que a opção foi comprada ou exercida.</HelpBubble></dt><dd className={accounting.optionNetResult < 0 ? 'pulse-negative' : 'pulse-positive'}>{accounting.optionNetResult > 0 ? '+' : ''}{money(accounting.optionNetResult)}</dd></div>
               <div><dt>Juros da renda fixa <HelpBubble title="Renda fixa">A sobra do orçamento recebe juros didáticos por {chosen.cdiBusinessDays} dias úteis, usando uma taxa diária histórica de referência constante ao longo do período. É uma aproximação, não o CDI acumulado exato.</HelpBubble></dt><dd>+{money(accounting.fixedIncomeNetResult)}</dd></div>
               <div><dt>Complemento fictício do CDI <HelpBubble title="Complemento não financiado">Este dinheiro adicional só existe na proposta acadêmica e seria necessário para garantir o piso. Não foi produzido necessariamente pela renda fixa e não existe atualmente uma fonte de financiamento definida.</HelpBubble></dt><dd>+{money(accounting.hypotheticalSupplement)}</dd></div>
-              <div className="pulse-result-total-row"><dt>Resultado líquido total</dt><dd className={accounting.totalNetResult < 0 ? 'pulse-negative' : 'pulse-positive'}>{accounting.totalNetResult > 0 ? '+' : ''}{money(accounting.totalNetResult)}</dd></div>
+              <div className="pulse-result-total-row"><dt>Resultado líquido total <HelpBubble title="Como calcular o resultado líquido?">É o valor final simulado menos o valor inicial investido. A conta soma o lucro ou prejuízo das opções, os juros da renda fixa sobre a sobra e, quando necessário, o complemento fictício ao piso de CDI. Esse complemento é uma hipótese acadêmica, não um ganho garantido.</HelpBubble></dt><dd className={accounting.totalNetResult < 0 ? 'pulse-negative' : 'pulse-positive'}>{accounting.totalNetResult > 0 ? '+' : ''}{money(accounting.totalNetResult)}</dd></div>
               <div className="pulse-result-total-row"><dt>Valor final hipotético</dt><dd>{money(totalWithFictionalFloor)}</dd></div>
             </dl>
             <div className="pulse-accounting-reference">
@@ -211,7 +217,10 @@ export default function PulseJourney() {
 
         {step === 6 && (chosen && strategy && optionResult && accounting ? <>
           <div className="eyebrow">{stock.name} · {direction === 'up' ? 'Subida' : 'Queda'} · {date(chosen.expiry)}</div>
-          <h1>Explore os cenários</h1>
+          <div className="pulse-heading-help">
+            <h1>Explore os cenários</h1>
+            <HelpBubble title="Como ler o gráfico?">A linha amarela mostra o lucro ou prejuízo da opção isolada. A azul mostra o resultado total hipotético do XP Pulse, incluindo o eventual complemento fictício do CDI. O ponto marcado é o preço fixo do cenário de referência: não é um botão para escolher quanto ganhar.</HelpBubble>
+          </div>
           <p className="lead">Veja como o resultado mudaria com outros preços da ação. O ponto destacado é o cenário de referência e não pode ser alterado.</p>
           <div className="pulse-chart-figure">
             <span>Resultado das opções no cenário</span>

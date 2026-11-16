@@ -159,3 +159,10 @@
 .pulse-v3 .pulse-simulation-method strong{color:#e8eee3}
 .pulse-v3 .pulse-simulation-method .pulse-hint{display:inline-block;vertical-align:middle;margin-left:4px}
 .pulse-v3 .pulse-simulation-method .pulse-hint-bubble{width:min(320px,calc(100vw - 60px))}
+
+/* Compact question-mark help beside important section titles. */
+.pulse-v3 .pulse-heading-help-compact{margin:18px 0 10px;align-items:center;gap:10px}
+.pulse-v3 .pulse-heading-help-compact h2{margin:0;line-height:1.25}
+.pulse-v3 .pulse-heading-help-compact .pulse-direction-heading{margin:0}
+.pulse-v3 .pulse-result-table .pulse-result-total-row dt .pulse-hint{margin-left:5px;vertical-align:middle}
+.pulse-v3 .pulse-result-table .pulse-result-total-row dt .pulse-hint-bubble{font-weight:400;text-align:left}
