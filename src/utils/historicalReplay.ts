@@ -1,6 +1,6 @@
 import type { Option, Stock } from '../types/market.ts';
 import { bestChoice, type Choice } from './pulseSelection.ts';
-import { payoff } from './optionsMath.ts';
+import { payoff, optionCost } from './optionsMath.ts';
 import { pulseAccounting } from './pulseAccounting.ts';
 import archives from '../data/historic-replays.json' with { type: 'json' };
 
@@ -10,6 +10,8 @@ export type HistoricalQuote = {
   strike: number;
   premium: number;
   sourceUrl: string;
+  turnover: number; // financial turnover on entry date
+  dailyMaxPremium: number;
 };
 export type HistoricalReplay = {
   id: string;
@@ -71,13 +73,32 @@ export function historicalOption(replay: HistoricalReplay, direction: Historical
   };
 }
 
+/**
+ * A volume-informed educational ceiling: (historical cash turnover / day's
+ * maximum traded unit premium) bounds a quantity known to have traded at
+ * various prices. This does NOT imply that this amount was available at the
+ * last observed premium, or that the position could have been executed.
+ */
+function cappedHistoricalChoice(choice: Choice | null, quote: HistoricalQuote, budget: number): Choice | null {
+  if (!choice || !Number.isFinite(quote.turnover) || !Number.isFinite(quote.dailyMaxPremium)
+    || quote.turnover <= 0 || quote.dailyMaxPremium <= 0) return null;
+  const maxLotsFromTurnover = Math.floor(quote.turnover / (quote.dailyMaxPremium * choice.original.contractSize));
+  const lots = Math.min(choice.lots, maxLotsFromTurnover);
+  if (lots < 1) return null;
+  const used = round(optionCost(choice.original) * lots);
+  return {
+    original: choice.original, position: { ...choice.original, contractSize: choice.original.contractSize * lots },
+    lots, used, remaining: round(budget - used),
+  };
+}
+
 export function historicalOpportunity(replay: HistoricalReplay, budget: number): HistoricalOpportunity | null {
   if (!Number.isFinite(budget) || budget < 1 || budget > 1_000_000) return null;
   if (replay.spotEntry <= 0 || replay.spotExpiry <= 0) return null;
   const days = historicalDaysBetween(replay.entryDate, replay.expiry);
   if (days <= 0 || dayUTC(replay.expiry) >= Date.now()) return null; // historical only
-  const rise = bestChoice([historicalOption(replay, 'up')], budget, replay.spotEntry);
-  const fall = bestChoice([historicalOption(replay, 'down')], budget, replay.spotEntry);
+  const rise = cappedHistoricalChoice(bestChoice([historicalOption(replay, 'up')], budget, replay.spotEntry), replay.options.up, budget);
+  const fall = cappedHistoricalChoice(bestChoice([historicalOption(replay, 'down')], budget, replay.spotEntry), replay.options.down, budget);
   // Do not display a period unless both possible predictions can be simulated.
   if (!rise || !fall) return null;
   return { ...replay, days, rise, fall, cdiRate: historicalCDIRate(replay) };
