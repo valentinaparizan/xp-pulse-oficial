@@ -200,7 +200,7 @@ export default function PulseJourney() {
               <div><dt>Piso fictício de 100% do CDI</dt><dd>{money(minimumReturn)}</dd></div>
             </dl>
           </div>
-          <WhatIfChart stock={stock} option={strategy.position} options={chartOptions} budget={budget} price={chosenPrice} onPrice={setPrice} onExpiry={() => {}}/>
+          <WhatIfChart stock={stock} option={strategy.position} options={chartOptions} budget={budget} price={chosenPrice} onPrice={setPrice} onExpiry={() => {}} protection={{budget, cash: strategy.remaining, rate}}/>
           <div className="pulse-protection-note"><ShieldCheck size={18}/><span>O gráfico preservado mostra a opção isolada. O resumo acima aplica a renda fixa e o piso de proteção fictício. Na vida real, comprar opções pode causar perda total do valor destinado a elas.</span></div>
           <details className="pulse-technical"><summary>Como chegamos ao resultado?</summary>
             <p>A simulação compra {strategy.position.contractSize.toLocaleString('pt-BR')} unidades históricas da série {strategy.original.ticker}, por {money(strategy.used)}. O restante, {money(strategy.remaining)}, vai para renda fixa.</p>
