@@ -102,3 +102,26 @@
 .pulse-v3 .pulse-accounting-reference .pulse-facts dt{font-size:13px}
 .pulse-v3 .pulse-accounting-reference .pulse-facts dd{font-size:14px}
 .pulse-v3 .pulse-accounting-reference .pulse-accounting-footnote{margin-top:6px;border-top:0;padding-top:5px}
+
+/* Visible, user-editable future-price scenario: explicit assumptions before calculating. */
+.pulse-v3 .pulse-scenario-panel{border-color:#6d7253}
+.pulse-v3 .pulse-scenario-panel>p{font-size:14px;line-height:1.6;color:var(--muted)}
+.pulse-v3 .pulse-scenario-panel>p strong{color:inherit}
+.pulse-v3 .pulse-scenario-presets{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.pulse-v3 .pulse-scenario-presets button{flex:1;min-width:75px;padding:11px 15px;border-radius:12px;background:var(--panel-raised,#252c2c);border:1px solid var(--line);color:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.pulse-v3 .pulse-scenario-presets button[aria-pressed="true"]{border-color:var(--yellow);color:var(--yellow);background:#302f1b}
+.pulse-v3 .pulse-scenario-input{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.pulse-v3 .pulse-scenario-input label{color:#f5f5ee;font-size:14px;font-weight:700}
+.pulse-v3 .pulse-scenario-input-control{display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:14px;background:#171c1b;border:1px solid #5a6960}
+.pulse-v3 .pulse-scenario-input-control:focus-within{border-color:var(--yellow);outline:1px solid var(--yellow)}
+.pulse-v3 .pulse-scenario-input-control>span{color:var(--yellow);font-size:18px;font-weight:800}
+.pulse-v3 .pulse-scenario-input-control>input{background:transparent;border:0;box-shadow:none;outline:none;min-width:0;width:100%;color:#fff;padding:14px 0;font-size:23px;font-weight:700;font-variant-numeric:tabular-nums}
+.pulse-v3 .pulse-scenario-input>small{color:var(--muted);font-size:12px;line-height:1.5}
+.pulse-v3 .pulse-scenario-input .field-error{margin:0;font-size:13px}
+.pulse-v3 .pulse-scenario-explanation{margin:16px 0 0}
+.pulse-v3 .pulse-scenario-warning{border-left:3px solid var(--yellow);padding:9px 12px;background:#302b1d;color:#f5e9bf!important;margin:12px 0 0}
+.pulse-v3 .pulse-scenario-summary{display:flex;flex-direction:column;gap:8px;padding:16px 20px;background:#1b2320;border:1px solid #4e5d51;border-radius:16px;margin:14px 0}
+.pulse-v3 .pulse-scenario-summary strong{font-size:17px}
+.pulse-v3 .pulse-scenario-summary span{font-size:13px;color:var(--muted);line-height:1.55}
+.pulse-v3 .pulse-scenario-chart-input{border:1px solid var(--line);border-radius:16px;padding:15px 18px;margin:18px 0;background:var(--panel)}
+.pulse-v3 .pulse-scenario-chart-input>small{display:block;color:var(--muted);font-size:12px}
