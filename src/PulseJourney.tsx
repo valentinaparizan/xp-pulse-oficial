@@ -11,6 +11,7 @@ import { money, date } from './utils/format';
 import { pulseAccounting } from './utils/pulseAccounting';
 import { suggestedFinalPrice, parseScenarioPrice, formatScenarioPrice, scenarioMovement, scenarioChangePercent } from './utils/scenarioPrice';
 import { WhatIfChart } from './components/WhatIfChart';
+import { StockFactorsExplorer } from './components/StockFactorsExplorer';
 import './pulse.css';
 
 const stocks = stockData as Stock[];
@@ -191,7 +192,10 @@ export default function PulseJourney() {
         {step === 4 && (chosen && strategy ? <>
           <div className="eyebrow">{stock.name} · até {date(chosen.expiry)}</div>
           <h1>Você acha que vai subir ou cair?</h1>
-          <p className="lead">Escolha o movimento que você acredita que vai acontecer até o prazo selecionado.</p>
+          <p className="lead">Conheça alguns fatores econômicos que podem influenciar essa ação antes de escolher a direção.</p>
+          <StockFactorsExplorer key={stock.ticker} stock={stock}/>
+          <h2 className="pulse-direction-heading">Agora, qual é a sua previsão?</h2>
+          <p className="pulse-direction-description">Depois de explorar os fatores, escolha se você acredita que a ação vai subir ou cair.</p>
           <div className="pulse-direction-grid">
             <button type="button" aria-pressed={direction === 'up'} className={direction === 'up' ? 'active' : ''} onClick={() => { if (direction !== 'up') { setDirection('up'); setPrice(null); setScenarioValid(true); } }}><ArrowUpRight size={30}/><strong>Subida</strong></button>
             <button type="button" aria-pressed={direction === 'down'} className={direction === 'down' ? 'active' : ''} onClick={() => { if (direction !== 'down') { setDirection('down'); setPrice(null); setScenarioValid(true); } }}><ArrowDownRight size={30}/><strong>Queda</strong></button>
