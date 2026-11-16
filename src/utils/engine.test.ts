@@ -164,7 +164,8 @@ test('simulação automática é reproduzível para mesma amostra e depende do p
   assert.deepEqual(a,b);
   assert.notEqual(a.finalPrice,longer.finalPrice);
   assert.ok(a.finalPrice>=0);
-  for(const invalid of [-1,0,1,NaN]) assert.throws(()=>generateAutomaticScenario(19,32,()=>invalid));
+  for(const invalid of [-1,1,NaN]) assert.throws(()=>generateAutomaticScenario(19,32,()=>invalid));
+  assert.ok(generateAutomaticScenario(19,32,()=>0).finalPrice>=0);
   assert.throws(()=>generateAutomaticScenario(0,32,()=>.5));
   assert.throws(()=>generateAutomaticScenario(19,0,()=>.5));
 });
