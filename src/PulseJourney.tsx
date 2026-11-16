@@ -110,7 +110,7 @@ export default function PulseJourney() {
             <p>Não encontramos nessa amostra opções para subida e queda que caibam no valor escolhido. Ajuste seu orçamento.</p>
             <button className="xp-primary" onClick={()=>setStep(2)}>Alterar valor ou prazo</button>
           </div> : <div className="pulse-opportunities">{opportunities.map((item,index)=><button className="pulse-opportunity" key={item.id} type="button" onClick={()=>{setHistoryId(item.id);setStep(4);}}>
-            <div className="pulse-opportunity-head"><strong>{index===0?'Mais próxima do seu prazo':'Outra oportunidade disponível'}</strong><ChevronRight size={18}/></div>
+            <div className="pulse-opportunity-head"><strong>{index===0?'Primeira oportunidade':'Outra oportunidade disponível'}</strong><ChevronRight size={18}/></div>
             <span className="pulse-expiry">{item.days} {item.days===1?'dia':'dias'}</span>
             <small>Prazo até o vencimento · referência educacional</small>
             <div className="pulse-movements"><span><ArrowUpRight size={15}/> Subida · {item.rise.original.ticker}</span><span><ArrowDownRight size={15}/> Queda · {item.fall.original.ticker}</span></div>
