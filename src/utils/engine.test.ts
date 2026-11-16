@@ -364,3 +364,35 @@ test('desfechos históricos não são sorteados: retorno permanece idêntico em 
     }
   }
 });
+
+
+test('jornada visual: mantém as 6 telas e o seletor de 1, 3 e 6 meses', () => {
+  const active=readFileSync(new URL('../PulseJourney.tsx',import.meta.url),'utf8');
+  for(const heading of ['Qual empresa você quer explorar?', 'Vamos montar sua simulação.', 'Suas oportunidades',
+    'Você acha que a ação vai subir ou cair?', 'Seu resultado', 'Explore os cenários']){
+    assert.ok(active.includes(heading),heading);
+  }
+  assert.ok(active.includes('[1,3,6].map'));
+  assert.ok(active.includes('item.days <= months * 31'));
+  assert.ok(active.includes('StockFactorsExplorer'));
+  assert.ok(active.includes('historicalOutcome(chosen,direction,budget)'));
+  assert.ok(active.includes('readOnly protection='));
+  assert.ok(!active.includes('O que aconteceu de verdade?'));
+  assert.ok(!active.includes('Escolha um período histórico'));
+  assert.ok(!active.includes('Reconstituições históricas de 2024 e 2025'));
+  assert.ok(!active.includes('generateAutomaticScenario'));
+  assert.ok(!active.includes('PriceScenarioField'));
+  assert.ok(!active.includes('setPrice('));
+});
+
+test('prazo máximo: episódios curtos se encaixam em todos os horizontes, sem alterar o vencimento observado',()=>{
+  for(const replay of historicalReplays){
+    const found=availableHistoricalOpportunities(replay.ticker,200).find(o=>o.id===replay.id)!;
+    assert.ok(found);
+    assert.ok(found.days>0 && found.days<=31);
+    for(const maxMonths of [1,3,6]){
+      assert.ok(found.days<=maxMonths*31);
+      assert.equal(found.expiry,replay.expiry);
+    }
+  }
+});
