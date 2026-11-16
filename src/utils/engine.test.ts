@@ -195,7 +195,9 @@ test('exemplo B3: cenário favorável independente pode gerar lucro real da opç
 test('a jornada ativa não expõe escolha do preço futuro ou resultado ao usuário', () => {
   const active = readFileSync(new URL('../PulseJourney.tsx', import.meta.url), 'utf8');
   assert.ok(active.includes('StockFactorsExplorer'));
-  assert.ok(active.includes('generateAutomaticScenario(stock.price, chosen.days)'));
+  assert.ok(active.includes('historicalOutcome(chosen,direction,budget)'));
+  assert.ok(!active.includes('generateAutomaticScenario'));
+  assert.ok(!active.includes('setPrice('));
   assert.ok(active.includes('readOnly protection='));
   assert.ok(!active.includes('PriceScenarioField'));
   assert.ok(!active.includes('setPrice('));
