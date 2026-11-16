@@ -40,3 +40,17 @@
 .pulse-v3 .pulse-result-card span{font-size:14px;color:#f0f0dc}
 .pulse-v3 .xp-primary:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:560px){.pulse-v3 .pulse-term-grid button{min-height:84px;padding:12px 6px}.pulse-v3 .pulse-term-grid button strong{font-size:15px}.pulse-v3 .pulse-movements{flex-direction:column}}
+
+/* Accessible optional explanations for the financial figures. */
+.pulse-v3 .pulse-facts dt{position:relative;display:flex;align-items:center;gap:8px;flex:1;min-width:0;line-height:1.4}
+.pulse-v3 .pulse-facts dd{flex-shrink:0}
+.pulse-v3 .pulse-info-intro{color:var(--muted);font-size:13px;margin:0 0 10px}
+.pulse-v3 .pulse-accounting-footnote{font-size:13px;line-height:1.6;color:var(--muted);border-top:1px solid var(--line);margin:12px 0 0;padding-top:14px}
+.pulse-v3 .pulse-hint{display:inline-flex;flex:none;vertical-align:middle}
+.pulse-v3 .pulse-hint-button{width:25px;height:25px;min-width:25px;border-radius:50%;border:1px solid #a7b36c;background:#273021;color:#dff38e;font-size:14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.pulse-v3 .pulse-hint-button:hover,.pulse-v3 .pulse-hint-button[aria-expanded="true"]{background:#dff38e;color:#15200e}
+.pulse-v3 .pulse-hint-button:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
+.pulse-v3 .pulse-hint-bubble{position:absolute;top:calc(100% + 8px);left:0;z-index:30;display:flex;flex-direction:column;gap:6px;width:min(340px,calc(100vw - 100px));background:#edf4e0;border:1px solid #bdce9d;color:#18231b;padding:13px 15px;border-radius:13px;box-shadow:0 10px 30px #0007;font-weight:400;font-size:13px;line-height:1.55;text-align:left;white-space:normal}
+.pulse-v3 .pulse-hint-bubble strong{font-weight:800;color:#18231b}
+.pulse-v3 .pulse-result-card span{line-height:1.55}
+@media(max-width:560px){.pulse-v3 .pulse-facts>div{gap:12px}.pulse-v3 .pulse-facts dt{font-size:13px}.pulse-v3 .pulse-facts dd{font-size:13px}.pulse-v3 .pulse-hint-bubble{width:min(270px,calc(100vw - 110px))}}

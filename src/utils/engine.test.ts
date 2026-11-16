@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { payoff, optionCost, breakEven, riskMetrics } from './optionsMath.ts';
+import { pulseAccounting } from './pulseAccounting.ts';
 import { parseCotahist } from './cotahist.ts';
 import { selectOptions, availableExpiries } from './optionFilters.ts';
 import { journeyAvailability, safeJourneyStep } from './journey.ts';
@@ -26,3 +27,41 @@ test('links diretos e rascunhos não avançam com seleção ou motivo inválido'
 test('CALL: estar dentro do dinheiro ainda pode significar perda parcial',()=>{const p=payoff(call,32.21);assert.equal(p.value,21);assert.equal(p.cost,42);assert.equal(p.result,-21);});
 test('PUT: as faixas de lucro e prejuízo invertem o sentido do preço',()=>{const put={...call,type:'PUT' as const};assert.equal(payoff(put,32).result,-42);assert.equal(payoff(put,31.79).result,-21);assert.equal(payoff(put,31.58).result,0);assert.ok(payoff(put,31.57).result>0);assert.equal(payoff(put,33).value,0);});
 test('limites da CALL distinguem strike e equilíbrio em centavos',()=>{assert.equal(payoff(call,32).value,0);assert.equal(payoff(call,32.01).result,-41);assert.equal(payoff(call,32.41).result,-1);assert.equal(payoff(call,32.42).result,0);assert.equal(payoff(call,32.43).result,1);});
+
+test('Pulse: opção perde tudo, renda fixa zero e complemento fictício não é rendimento da renda fixa', () => {
+  const p = pulseAccounting({principal:200,optionAmount:200,optionValueAtMaturity:0,fixedIncomeAmount:0,simulatedRate:0.0619});
+  assert.equal(p.optionNetResult,-200);
+  assert.equal(p.fixedIncomeAtMaturity,0);
+  assert.equal(p.economicValueAtMaturity,0);
+  assert.equal(p.hypotheticalFloor,212.38);
+  assert.equal(p.hypotheticalSupplement,212.38);
+  assert.equal(p.simulatedTotal,212.38);
+  assert.equal(p.hypotheticalFloorGain,12.38);
+  assert.equal(p.floorApplies,true);
+});
+test('Pulse: lucro da opção e sobra em renda fixa não recebem complemento fictício quando superam o piso', () => {
+  const p = pulseAccounting({principal:100,optionAmount:90,optionValueAtMaturity:130,fixedIncomeAmount:10,simulatedRate:.0364});
+  assert.equal(p.optionNetResult,40);
+  assert.equal(p.fixedIncomeAtMaturity,10.36);
+  assert.equal(p.economicValueAtMaturity,140.36);
+  assert.equal(p.hypotheticalFloor,103.64);
+  assert.equal(p.hypotheticalSupplement,0);
+  assert.equal(p.simulatedTotal,140.36);
+  assert.equal(p.floorApplies,false);
+});
+test('Pulse: perda das opções exige complemento; renda fixa não é confundida com garantia', () => {
+  const p = pulseAccounting({principal:100,optionAmount:90,optionValueAtMaturity:0,fixedIncomeAmount:10,simulatedRate:.0364});
+  assert.equal(p.fixedIncomeAtMaturity,10.36);
+  assert.equal(p.hypotheticalFloor,103.64);
+  assert.equal(p.hypotheticalSupplement,93.28);
+  assert.equal(p.simulatedTotal,103.64);
+});
+test('Pulse: 100% em renda fixa não cria complemento quando o piso usa a mesma taxa', () => {
+  const p = pulseAccounting({principal:100,optionAmount:0,optionValueAtMaturity:0,fixedIncomeAmount:100,simulatedRate:.0364});
+  assert.equal(p.fixedIncomeAtMaturity,103.64);
+  assert.equal(p.hypotheticalSupplement,0);
+  assert.equal(p.simulatedTotal,103.64);
+});
+test('Pulse: composição inválida não permite inventar recursos fora do principal', () => {
+  assert.throws(() => pulseAccounting({principal:100,optionAmount:100,optionValueAtMaturity:0,fixedIncomeAmount:50,simulatedRate:.03}));
+});

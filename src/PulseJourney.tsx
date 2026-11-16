@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState, type ReactNode } from 'react';
 import { ArrowLeft, ArrowUpRight, ArrowDownRight, ChevronRight, ShieldCheck } from 'lucide-react';
 import stockData from './data/stocks.json';
 import optionData from './data/options.json';
@@ -7,6 +7,7 @@ import type { Option, Stock } from './types/market';
 import { validOption } from './utils/optionFilters';
 import { optionCost, payoff, breakEven } from './utils/optionsMath';
 import { money, date } from './utils/format';
+import { pulseAccounting } from './utils/pulseAccounting';
 import { WhatIfChart } from './components/WhatIfChart';
 import './pulse.css';
 
@@ -61,6 +62,15 @@ function findOpportunities(stock: Stock, budget: number, months: number): Opport
 }
 function simulatedRate(days: number) { return Math.pow(1 + DEMO_CDI_MONTHLY_RATE, days / 30) - 1; }
 
+function HelpBubble({ title, children }: { title: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const id = useId();
+  return <span className="pulse-hint">
+    <button className="pulse-hint-button" type="button" aria-label={'Entenda: ' + title} aria-controls={id} aria-expanded={open} onClick={() => setOpen(previous => !previous)}>?</button>
+    {open && <span className="pulse-hint-bubble" role="note" id={id}><strong>{title}</strong><span>{children}</span></span>}
+  </span>;
+}
+
 export default function PulseJourney() {
   const [step, setStep] = useState(0);
   const [ticker, setTicker] = useState('PETR4');
@@ -78,12 +88,17 @@ export default function PulseJourney() {
   const chosenPrice = price === null ? stock.price : price;
   const rate = chosen ? simulatedRate(chosen.days) : 0;
   const optionResult = strategy ? payoff(strategy.position, chosenPrice) : null;
-  const fixedFuture = strategy ? strategy.remaining * (1 + rate) : 0;
-  const resultWithoutProtection = optionResult ? round(optionResult.value + fixedFuture) : 0;
-  const minimumReturn = round(budget * (1 + rate));
-  // Explicitly fictitious financial floor: no funding or guarantee is implemented by the MVP.
-  const totalWithFictionalFloor = Math.max(minimumReturn, resultWithoutProtection);
-  const usedProtection = resultWithoutProtection < minimumReturn;
+  // Assets and a hypothetical unfunded issuer supplement are distinct.
+  // This preserves the academic proposal; it does not implement a real CDI guarantee.
+  const accounting = strategy && optionResult ? pulseAccounting({
+    principal: budget,
+    optionAmount: strategy.used,
+    optionValueAtMaturity: optionResult.value,
+    fixedIncomeAmount: strategy.remaining,
+    simulatedRate: rate,
+  }) : null;
+  const usedProtection = accounting?.floorApplies ?? false;
+  const totalWithFictionalFloor = accounting?.simulatedTotal ?? 0;
   const chartOptions = chosen ? historicalOptions.filter(item => item.underlying === stock.ticker && item.expiry === chosen.expiry && item.type === strategy?.original.type) : [];
   const changeTerms = () => { setExpiry(''); setPrice(null); };
   const goResult = () => { setPrice(stock.price); setStep(5); };
@@ -187,25 +202,31 @@ export default function PulseJourney() {
           <h1>Seu resultado simulado</h1>
           <p className="lead">Altere o preço da ação no gráfico para experimentar outros resultados.</p>
           <div className="pulse-result-card">
-            <small>{usedProtection ? 'RENDA DE PROTEÇÃO HIPOTÉTICA' : 'ESTRATÉGIA COM GANHO SUPERIOR AO PISO'}</small>
+            <small>{usedProtection ? 'RESULTADO COM PISO HIPOTÉTICO DE CDI' : 'ESTRATÉGIA ACIMA DO PISO HIPOTÉTICO'}</small>
             <strong>{money(totalWithFictionalFloor)}</strong>
             <span>Valor inicial de {money(budget)} + {money(round(totalWithFictionalFloor - budget))} de rendimento simulado.</span>
+            {usedProtection && accounting && <span>Esse total inclui {money(accounting.hypotheticalSupplement)} de complemento fictício: ele não foi gerado pela renda fixa nem possui financiamento definido.</span>}
           </div>
           <div className="pulse-panel">
+            <h2>Entenda seus valores</h2>
+            <p className="pulse-info-intro">Toque nos pontos de interrogação para entender cada número.</p>
             <dl className="pulse-facts">
-              <div><dt>Preço inicial da ação (histórico)</dt><dd>{money(stock.price)}</dd></div>
-              <div><dt>Preço final hipotético</dt><dd>{money(chosenPrice)}</dd></div>
-              <div><dt>Resultado somente da opção</dt><dd>{money(optionResult.result)}</dd></div>
-              <div><dt>Saldo da renda fixa</dt><dd>{money(round(fixedFuture))}</dd></div>
-              <div><dt>Piso fictício de 100% do CDI</dt><dd>{money(minimumReturn)}</dd></div>
+              <div><dt>Preço inicial da ação <HelpBubble title="Preço inicial da ação">Preço histórico da {stock.name} registrado em {date(stock.sourceDate)}. É o ponto de partida da simulação; não é a cotação de hoje.</HelpBubble></dt><dd>{money(stock.price)}</dd></div>
+              <div><dt>Preço final hipotético <HelpBubble title="Preço final hipotético">Preço que você imagina que a ação terá no vencimento. Você pode alterá-lo no gráfico. Não é previsão nem preço real do futuro.</HelpBubble></dt><dd>{money(chosenPrice)}</dd></div>
+              <div><dt>Resultado somente da opção <HelpBubble title="Resultado da opção">Quanto a posição em opções ganharia ou perderia, já descontado o custo de compra. É o resultado da opção isolada, não o total que o XP Pulse fictício apresenta.</HelpBubble></dt><dd>{money(accounting?.optionNetResult ?? 0)}</dd></div>
+              <div><dt>Renda fixa no vencimento <HelpBubble title="Renda fixa">Apenas o valor que sobrou após a compra de opções é aplicado aqui, com rendimento hipotético. Se estiver zerado, todo o orçamento foi usado nas opções. Isso não significa que a renda fixa criou o ganho do CDI.</HelpBubble></dt><dd>{money(accounting?.fixedIncomeAtMaturity ?? 0)}</dd></div>
+              <div><dt>Valor antes da proteção <HelpBubble title="Valor antes da proteção">Somamos o valor que a opção teria no vencimento com o valor da parcela de renda fixa. Esse é o resultado econômico simulado, sem nenhuma ajuda externa.</HelpBubble></dt><dd>{money(accounting?.economicValueAtMaturity ?? 0)}</dd></div>
+              <div><dt>Complemento fictício da proteção <HelpBubble title="Complemento fictício">É quanto faltaria para alcançar o rendimento mínimo prometido na hipótese acadêmica. Não é dinheiro gerado pela renda fixa: alguém precisaria financiar esse valor para a proteção existir de verdade.</HelpBubble></dt><dd>{money(accounting?.hypotheticalSupplement ?? 0)}</dd></div>
+              <div><dt>Piso hipotético de 100% do CDI <HelpBubble title="Piso hipotético de 100% do CDI">É o investimento inicial acrescido de uma taxa ilustrativa de 1,2% ao mês durante {chosen.days} dias. Não usamos a taxa CDI de mercado. Essa remuneração é uma hipótese do projeto, sem garantia real.</HelpBubble></dt><dd>{money(accounting?.hypotheticalFloor ?? 0)}</dd></div>
             </dl>
+            <p className="pulse-accounting-footnote">O valor final simulado é a soma do valor antes da proteção com o complemento fictício, quando necessário. A viabilidade dessa proteção ainda precisa ser estudada.</p>
           </div>
           <WhatIfChart stock={stock} option={strategy.position} options={chartOptions} budget={budget} price={chosenPrice} onPrice={setPrice} onExpiry={() => {}} protection={{budget, cash: strategy.remaining, rate}}/>
-          <div className="pulse-protection-note"><ShieldCheck size={18}/><span>O gráfico preservado mostra a opção isolada. O resumo acima aplica a renda fixa e o piso de proteção fictício. Na vida real, comprar opções pode causar perda total do valor destinado a elas.</span></div>
+          <div className="pulse-protection-note"><ShieldCheck size={18}/><span>O gráfico preservado mostra a opção isolada e o resultado acadêmico com piso fictício. O complemento necessário para alcançar esse piso não está financiado. No mercado real, a compra de opções pode perder todo o prêmio.</span></div>
           <details className="pulse-technical"><summary>Como chegamos ao resultado?</summary>
             <p>A simulação compra {strategy.position.contractSize.toLocaleString('pt-BR')} unidades históricas da série {strategy.original.ticker}, por {money(strategy.used)}. O restante, {money(strategy.remaining)}, vai para renda fixa.</p>
-            <p>Se a opção acabar valendo {money(optionResult.value)}, somamos esse valor ao saldo hipotético da renda fixa: {money(resultWithoutProtection)} no total.</p>
-            <p>Para fins acadêmicos, com CDI ilustrativo de 1,2% ao mês, o produto imaginário oferece um piso de {money(minimumReturn)} após {chosen.days} dias. O total simulado é o maior dos dois valores.</p>
+            <p>O valor bruto da opção no vencimento seria {money(optionResult.value)}. Somado à renda fixa de {money(accounting?.fixedIncomeAtMaturity ?? 0)}, resultaria em {money(accounting?.economicValueAtMaturity ?? 0)} antes da proteção.</p>
+            <p>Com o piso hipotético de {money(accounting?.hypotheticalFloor ?? 0)} em {chosen.days} dias, faltaria um complemento fictício de {money(accounting?.hypotheticalSupplement ?? 0)}. O total do cenário é {money(totalWithFictionalFloor)}.</p>
             <p>A direção da ação, sozinha, não garante lucro na opção: é necessário ultrapassar o ponto de equilíbrio de {money(breakEven(strategy.original))} no vencimento.</p>
             <p className="disclaimer">Essa garantia não foi financiada nem validada; o XP Pulse não representa uma operação real, promessa de rentabilidade ou produto aprovado pela XP ou CVM. Os cálculos são antes de custos e impostos.</p>
           </details>
