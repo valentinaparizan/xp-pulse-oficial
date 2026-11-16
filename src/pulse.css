@@ -84,3 +84,10 @@
 .pulse-v3 .pulse-chart-figure>small{font-size:13px;color:var(--muted)}
 .pulse-v3 .pulse-result-details{margin-bottom:22px}
 .pulse-v3 .pulse-hint{position:relative}
+
+/* Question-mark help next to the opportunities heading. */
+.pulse-v3 .pulse-heading-help{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;position:relative}
+.pulse-v3 .pulse-heading-help h1{margin:0}
+.pulse-v3 .pulse-heading-help .pulse-hint{position:relative}
+.pulse-v3 .pulse-heading-help .pulse-hint-button{width:29px;height:29px;min-width:29px;font-size:15px}
+.pulse-v3 .pulse-heading-help .pulse-hint-bubble{left:auto;right:0;width:min(340px,calc(100vw - 48px));max-width:calc(100vw - 48px);z-index:40}
