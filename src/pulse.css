@@ -91,3 +91,14 @@
 .pulse-v3 .pulse-heading-help .pulse-hint{position:relative}
 .pulse-v3 .pulse-heading-help .pulse-hint-button{width:29px;height:29px;min-width:29px;font-size:15px}
 .pulse-v3 .pulse-heading-help .pulse-hint-bubble{left:auto;right:0;width:min(340px,calc(100vw - 48px));max-width:calc(100vw - 48px);z-index:40}
+
+/* One additive reconciliation: initial principal + net components = final amount. */
+.pulse-v3 .pulse-result-table .pulse-result-total-row{border-top:1px solid var(--yellow);padding-top:15px;font-weight:800}
+.pulse-v3 .pulse-result-table .pulse-result-total-row dt{color:inherit;font-weight:800}
+.pulse-v3 .pulse-result-table .pulse-result-total-row dd{font-size:18px}
+.pulse-v3 .pulse-accounting-reference{margin-top:19px;padding-top:18px;border-top:1px solid var(--line)}
+.pulse-v3 .pulse-accounting-reference>strong{font-size:14px}
+.pulse-v3 .pulse-accounting-reference .pulse-facts{margin-top:8px}
+.pulse-v3 .pulse-accounting-reference .pulse-facts dt{font-size:13px}
+.pulse-v3 .pulse-accounting-reference .pulse-facts dd{font-size:14px}
+.pulse-v3 .pulse-accounting-reference .pulse-accounting-footnote{margin-top:6px;border-top:0;padding-top:5px}

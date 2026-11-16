@@ -193,20 +193,29 @@ export default function PulseJourney() {
           <div className="pulse-result-card">
             <small>RESULTADO FINAL DA SIMULAÇÃO</small>
             <strong>{money(totalWithFictionalFloor)}</strong>
-            <span>Seu investimento de {money(budget)} teria {money(round(totalWithFictionalFloor - budget))} de rendimento no cenário acadêmico.</span>
+            <span>Investimento inicial: {money(budget)}. Resultado líquido total: {accounting.totalNetResult > 0 ? '+' : ''}{money(accounting.totalNetResult)} (antes de taxas e impostos).</span>
           </div>
           <div className="pulse-panel pulse-result-table">
             <h2>De onde veio esse resultado?</h2>
+            <p className="pulse-info-intro">Esta conta mostra o que foi somado para chegar ao valor final.</p>
             <dl className="pulse-facts">
-              <div><dt>Valor que você investiu <HelpBubble title="Valor inicial">É o total que você escolheu para a simulação.</HelpBubble></dt><dd>{money(budget)}</dd></div>
-              <div><dt>Usado nas opções <HelpBubble title="Compra de opções">O simulador escolheu a maior quantidade de opções que coube no valor disponível, respeitando os blocos didáticos da base histórica.</HelpBubble></dt><dd>{money(strategy.used)}</dd></div>
-              <div><dt>Destinado à renda fixa <HelpBubble title="Dinheiro na renda fixa">É o que sobrou depois da compra de opções. Pode ser zero.</HelpBubble></dt><dd>{money(strategy.remaining)}</dd></div>
-              <div><dt>Resultado líquido da opção <HelpBubble title="Resultado da opção">Lucro ou prejuízo da opção isolada, já descontado o que custou comprá-la. Um valor negativo significa perda, não ausência de rendimento do produto inteiro.</HelpBubble></dt><dd className={accounting.optionNetResult < 0 ? 'pulse-negative' : 'pulse-positive'}>{accounting.optionNetResult > 0 ? '+' : ''}{money(accounting.optionNetResult)}</dd></div>
-              <div><dt>Rendimento da renda fixa <HelpBubble title="Rendimento da renda fixa">Somente os juros sobre a quantia realmente destinada à renda fixa. Esse valor não é o rendimento mínimo de CDI prometido pelo produto imaginário.</HelpBubble></dt><dd>+{money(round(accounting.fixedIncomeAtMaturity - strategy.remaining))}</dd></div>
-              <div><dt>Ganho mínimo de 100% do CDI <HelpBubble title="CDI hipotético">Na hipótese do trabalho, o investimento teria pelo menos este ganho no período. A taxa utilizada é ilustrativa: 1,2% ao mês, e não a cotação atual do CDI. Não é necessariamente dinheiro gerado pela parcela em renda fixa.</HelpBubble></dt><dd>+{money(accounting.hypotheticalFloorGain)}</dd></div>
-              <div><dt>Complemento hipotético para garantir o CDI <HelpBubble title="Complemento da proteção">Se as opções e a renda fixa não somarem o mínimo, uma parte adicional precisaria ser financiada para o investidor receber o piso proposto. O simulador calcula esse complemento, mas não existe ainda uma estrutura real que o pague.</HelpBubble></dt><dd>{money(accounting.hypotheticalSupplement)}</dd></div>
+              <div><dt>Valor inicial investido <HelpBubble title="Valor inicial">Valor total que você escolheu para a simulação. Ele foi dividido entre opções e a sobra destinada à renda fixa.</HelpBubble></dt><dd>{money(budget)}</dd></div>
+              <div><dt>Lucro ou prejuízo das opções <HelpBubble title="Resultado líquido das opções">O valor bruto das opções no vencimento menos o custo para comprá-las: {money(optionResult.value)} menos {money(strategy.used)}. Um número negativo é perda apenas das opções, não do produto inteiro.</HelpBubble></dt><dd className={accounting.optionNetResult < 0 ? 'pulse-negative' : 'pulse-positive'}>{accounting.optionNetResult > 0 ? '+' : ''}{money(accounting.optionNetResult)}</dd></div>
+              <div><dt>Juros da renda fixa <HelpBubble title="Juros da renda fixa">Somente os juros ilustrativos sobre {money(strategy.remaining)}, que sobraram depois da compra das opções. O saldo investido na renda fixa não é somado outra vez porque já faz parte do investimento inicial.</HelpBubble></dt><dd>+{money(accounting.fixedIncomeNetResult)}</dd></div>
+              <div><dt>Complemento hipotético do CDI <HelpBubble title="Complemento hipotético">Se as opções e a renda fixa não atingirem o mínimo fictício, calculamos quanto precisaria ser acrescentado para chegar ao piso. Este complemento ainda não tem financiamento nem garantia real.</HelpBubble></dt><dd>+{money(accounting.hypotheticalSupplement)}</dd></div>
+              <div className="pulse-result-total-row"><dt>Resultado líquido total <HelpBubble title="Resultado líquido total">É a diferença entre o valor final da simulação e o investimento inicial. Também equivale a: lucro ou prejuízo das opções + juros da renda fixa + complemento hipotético. Antes de taxas e impostos.</HelpBubble></dt><dd className={accounting.totalNetResult < 0 ? 'pulse-negative' : 'pulse-positive'}>{accounting.totalNetResult > 0 ? '+' : ''}{money(accounting.totalNetResult)}</dd></div>
+              <div className="pulse-result-total-row"><dt>Valor final simulado</dt><dd>{money(totalWithFictionalFloor)}</dd></div>
             </dl>
-            <p className="pulse-accounting-footnote">{usedProtection ? 'Neste cenário, a estratégia e a renda fixa não atingiram o ganho mínimo hipotético. O complemento aparece separado para explicar como o valor final foi calculado.' : 'Neste cenário, o valor das opções e da renda fixa superou o ganho mínimo de referência; não foi necessário complemento hipotético.'}</p>
+            <div className="pulse-accounting-reference">
+              <strong>Como o investimento foi dividido</strong>
+              <dl className="pulse-facts">
+                <div><dt>Usado para comprar opções</dt><dd>{money(strategy.used)}</dd></div>
+                <div><dt>Destinado à renda fixa</dt><dd>{money(strategy.remaining)}</dd></div>
+                <div><dt>Referência de 100% do CDI <HelpBubble title="CDI: referência, não soma">Este é o rendimento mínimo fictício calculado sobre todo o valor inicial, com taxa ilustrativa de 1,2% ao mês. É um parâmetro de comparação, não uma parcela adicional a somar aos resultados acima.</HelpBubble></dt><dd>+{money(accounting.hypotheticalFloorGain)}</dd></div>
+              </dl>
+              <p className="pulse-accounting-footnote">A referência de CDI não é somada à conta. Somente o complemento hipotético, quando necessário, entra no cálculo do valor final.</p>
+            </div>
+            <p className="pulse-accounting-footnote">{usedProtection ? 'Neste cenário, o valor gerado por opções e renda fixa ficou abaixo do piso hipotético. A parcela adicional necessária aparece separada e ainda não tem financiamento definido.' : 'Neste cenário, opções e renda fixa superaram o piso fictício, portanto não houve complemento de proteção.'}</p>
           </div>
           <details className="pulse-panel pulse-result-details">
             <summary>Consultar preços e cálculos da operação</summary>
@@ -232,7 +241,7 @@ export default function PulseJourney() {
           <div className="pulse-chart-figure">
             <span>Valor final do XP Pulse neste cenário fictício</span>
             <strong>{money(totalWithFictionalFloor)}</strong>
-            <small>Variação em relação ao valor inicial: {money(round(totalWithFictionalFloor - budget))}</small>
+            <small>Resultado líquido total: {accounting.totalNetResult > 0 ? '+' : ''}{money(accounting.totalNetResult)}</small>
           </div>
           <WhatIfChart stock={stock} option={strategy.position} options={chartOptions} budget={budget} price={chosenPrice} onPrice={setPrice} onExpiry={() => {}} protection={{budget, cash: strategy.remaining, rate}}/>
           <p className="pulse-choice-note">Linha amarela: resultado da opção isolada. Linha azul: resultado hipotético do XP Pulse, incluindo eventual complemento para atingir o piso de 100% do CDI.</p>
