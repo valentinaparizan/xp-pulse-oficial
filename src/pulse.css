@@ -153,3 +153,9 @@
 .pulse-v3 .pulse-direction-heading{margin:18px 0 6px;font-size:22px}
 .pulse-v3 .pulse-direction-description{font-size:14px;line-height:1.6;color:var(--muted);margin:0}
 @media(max-width:650px){.pulse-v3 .pulse-factors-columns{grid-template-columns:1fr}.pulse-v3 .pulse-factors-column{padding:12px}.pulse-v3 .pulse-factor summary{padding:14px 12px}}
+
+/* Short explanation only: the user cannot choose or edit the market outcome. */
+.pulse-v3 .pulse-simulation-method{position:relative;font-size:13px;line-height:1.65;color:var(--muted);margin:0 0 17px}
+.pulse-v3 .pulse-simulation-method strong{color:#e8eee3}
+.pulse-v3 .pulse-simulation-method .pulse-hint{display:inline-block;vertical-align:middle;margin-left:4px}
+.pulse-v3 .pulse-simulation-method .pulse-hint-bubble{width:min(320px,calc(100vw - 60px))}
