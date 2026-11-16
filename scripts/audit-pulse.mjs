@@ -18,7 +18,7 @@ function best(series,budget,spot){
     if(used>budget)return null;
     return {original,lots,units:original.contractSize*lots,used,remaining:round(budget-used)};
   }).filter(Boolean);
-  candidates.sort((a,b)=>a.remaining-b.remaining || Math.abs(a.original.strike-spot)-Math.abs(b.original.strike-spot) || (b.original.trades||0)-(a.original.trades||0)||a.original.ticker.localeCompare(b.original.ticker));
+  candidates.sort((a,b)=>Math.abs((a.original.strike+(a.original.type==='CALL'?1:-1)*a.original.premium/a.original.quoteFactor)-spot)/spot-Math.abs((b.original.strike+(b.original.type==='CALL'?1:-1)*b.original.premium/b.original.quoteFactor)-spot)/spot || a.remaining-b.remaining || (b.original.trades||0)-(a.original.trades||0)||a.original.ticker.localeCompare(b.original.ticker));
   return candidates[0]||null;
 }
 function get(stock,budget,months){
