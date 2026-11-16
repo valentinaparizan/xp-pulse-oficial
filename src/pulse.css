@@ -69,3 +69,18 @@
 .pulse-v3 .pulse-result-details[open]>summary{margin-bottom:16px}
 .pulse-v3 .pulse-hint{position:relative}
 @media(max-width:560px){.pulse-v3 .pulse-choice-comparison{grid-template-columns:1fr}.pulse-v3 .pulse-choice-card{min-height:120px}}
+
+/* Result summary: one numerical table. Graph lives on its own following screen. */
+.pulse-v3 .pulse-result-table{margin:20px 0 18px}
+.pulse-v3 .pulse-result-table h2{margin:0 0 14px;font-size:22px}
+.pulse-v3 .pulse-result-table .pulse-facts>div{padding:14px 0}
+.pulse-v3 .pulse-result-table .pulse-facts dd{font-variant-numeric:tabular-nums;font-size:16px}
+.pulse-v3 .pulse-negative{color:#ff9d9d}
+.pulse-v3 .pulse-positive{color:#dff38e}
+.pulse-v3 .pulse-secondary{display:block;margin:14px auto;color:var(--muted);background:transparent;border:0;text-decoration:underline;cursor:pointer;padding:12px}
+.pulse-v3 .pulse-chart-figure{background:#232b1d;border:1px solid var(--yellow);border-radius:18px;padding:20px 23px;margin:20px 0;display:flex;flex-direction:column;gap:8px}
+.pulse-v3 .pulse-chart-figure>span{font-size:14px;color:#efeee3}
+.pulse-v3 .pulse-chart-figure>strong{font-size:clamp(30px,7vw,46px);line-height:1.1}
+.pulse-v3 .pulse-chart-figure>small{font-size:13px;color:var(--muted)}
+.pulse-v3 .pulse-result-details{margin-bottom:22px}
+.pulse-v3 .pulse-hint{position:relative}
