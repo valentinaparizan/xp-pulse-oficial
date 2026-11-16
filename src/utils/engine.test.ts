@@ -1,4 +1,6 @@
 import { test } from 'node:test';
+import { readFileSync } from 'node:fs';
+import { suggestedFinalPrice, parseScenarioPrice, scenarioMovement, scenarioChangePercent } from './scenarioPrice.ts';
 import assert from 'node:assert/strict';
 import { payoff, optionCost, breakEven, riskMetrics } from './optionsMath.ts';
 import { pulseAccounting } from './pulseAccounting.ts';
@@ -137,3 +139,50 @@ test('resultado líquido total: aporte totalmente em opções e perda integral n
   assert.equal(r.simulatedTotal,103);
 });
 function roundForTest(n:number){return Math.round((n+Number.EPSILON)*100)/100;}
+
+test('cenário padrão acompanha direção escolhida e não mantém o preço estável', () => {
+  assert.equal(suggestedFinalPrice(19, 'up'), 20.90);
+  assert.equal(suggestedFinalPrice(19, 'down'), 17.10);
+  assert.equal(scenarioMovement(19, suggestedFinalPrice(19, 'up')), 'up');
+  assert.equal(scenarioMovement(19, suggestedFinalPrice(19, 'down')), 'down');
+  assert.equal(scenarioMovement(19,19), 'flat');
+  assert.equal(scenarioMovement(19,18.99), 'down');
+  assert.equal(scenarioChangePercent(19,20.9),10);
+  assert.equal(scenarioChangePercent(19,17.1),-10);
+});
+test('preço final editável aceita centavos brasileiros e rejeita cenários inválidos', () => {
+  assert.equal(parseScenarioPrice('20,90'),20.9);
+  assert.equal(parseScenarioPrice('20.90'),20.9);
+  assert.equal(parseScenarioPrice(' R$ 20,90 '),20.9);
+  assert.equal(parseScenarioPrice('0'),0);
+  for(const invalid of ['','-1','abc','20,999','1.000,00','1000001','NaN'])
+    assert.equal(parseScenarioPrice(invalid),null);
+});
+test('exemplo reproduzível B3: direção Subida +10% gera lucro da opção e total R$248,13', () => {
+  const opts = JSON.parse(readFileSync(new URL('../data/options.json', import.meta.url), 'utf8')) as Option[];
+  const selected = bestChoice(opts.filter(o => o.underlying === 'B3SA3' && o.expiry === '2026-12-18' && o.type === 'CALL'), 200,19);
+  assert.ok(selected);
+  assert.equal(selected.original.ticker,'B3SAL189');
+  assert.equal(selected.used,190);
+  assert.equal(selected.remaining,10);
+  const imaginedFinal = suggestedFinalPrice(19,'up');
+  assert.equal(imaginedFinal,20.9);
+  const r = payoff(selected.position,imaginedFinal);
+  assert.equal(r.value,238);
+  assert.equal(r.result,48);
+  const accounting = pulseAccounting({
+    principal:200,optionAmount:selected.used,optionValueAtMaturity:r.value,
+    fixedIncomeAmount:selected.remaining,simulatedRate:Math.pow(1.012,32/30)-1
+  });
+  assert.equal(accounting.optionNetResult,48);
+  assert.equal(accounting.fixedIncomeNetResult,.13);
+  assert.equal(accounting.totalNetResult,48.13);
+  assert.equal(accounting.simulatedTotal,248.13);
+  assert.equal(accounting.hypotheticalSupplement,0);
+});
+test('previsão de subida e preço sem subida não são confundidos com lucro na opção', () => {
+  const b3call = {...call,underlying:'B3SA3',strike:18.52,premium:1.90};
+  const atStart = payoff(b3call,19);
+  assert.equal(atStart.result,-142);
+  assert.equal(scenarioMovement(19,19),'flat');
+});
