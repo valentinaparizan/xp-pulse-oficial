@@ -6,7 +6,8 @@
     "payoff": "Valor intrínseco teórico pela cotação de fechamento da ação no vencimento, não resultado liquidado/realizado nem preço oficial de exercício",
     "educationalBlock": 100,
     "cdiNote": "Taxa CDI diária histórica informada em %/dia; composição apenas em dias úteis posteriores ao pregão inicial e até o vencimento",
-    "caveat": "Amostra histórica selecionada para estudo, sujeita a custos, liquidez, mudanças de preço de exercício por proventos e regras de liquidação. Não é uma estratégia executada, oferta, backtest extensivo nem promessa de 100% CDI."
+    "caveat": "Amostra histórica selecionada para estudo, sujeita a custos, liquidez, mudanças de preço de exercício por proventos e regras de liquidação. Não é uma estratégia executada, oferta, backtest extensivo nem promessa de 100% CDI.",
+    "liquidityCap": "Para não ilustrar a compra de mais unidades do que o volume financeiro registrado no pregão inicial comporta, limitamos blocos didáticos de 100 ao piso de (volume financeiro do pregão / [maior prêmio unitário negociado no dia × 100]); é apenas uma limitação conservadora de escala, sem afirmar que ordens poderiam ter sido executadas ao último preço."
   },
   "replays": [
     {
@@ -25,13 +26,17 @@
           "ticker": "B3SAJ107",
           "strike": 10.65,
           "premium": 1.68,
-          "sourceUrl": "https://opcoes.net.br/B3SAJ107"
+          "sourceUrl": "https://opcoes.net.br/B3SAJ107",
+          "turnover": 32566,
+          "dailyMaxPremium": 1.84
         },
         "down": {
           "ticker": "B3SAV107",
           "strike": 10.65,
           "premium": 0.02,
-          "sourceUrl": "https://opcoes.net.br/B3SAV107"
+          "sourceUrl": "https://opcoes.net.br/B3SAV107",
+          "turnover": 12,
+          "dailyMaxPremium": 0.02
         }
       }
     },
@@ -51,13 +56,17 @@
           "ticker": "ITUBJ400",
           "strike": 35.73,
           "premium": 1.62,
-          "sourceUrl": "https://opcoes.net.br/ITUBJ400"
+          "sourceUrl": "https://opcoes.net.br/ITUBJ400",
+          "turnover": 12897.49,
+          "dailyMaxPremium": 1.63
         },
         "down": {
           "ticker": "ITUBV400",
           "strike": 35.73,
           "premium": 0.03,
-          "sourceUrl": "https://opcoes.net.br/ITUBV400"
+          "sourceUrl": "https://opcoes.net.br/ITUBV400",
+          "turnover": 547,
+          "dailyMaxPremium": 0.05
         }
       }
     },
@@ -77,13 +86,17 @@
           "ticker": "VALEJ620",
           "strike": 58.32,
           "premium": 1.8,
-          "sourceUrl": "https://opcoes.net.br/VALEJ620"
+          "sourceUrl": "https://opcoes.net.br/VALEJ620",
+          "turnover": 3658675,
+          "dailyMaxPremium": 1.96
         },
         "down": {
           "ticker": "VALEV620",
           "strike": 58.32,
           "premium": 0.19,
-          "sourceUrl": "https://opcoes.net.br/VALEV620"
+          "sourceUrl": "https://opcoes.net.br/VALEV620",
+          "turnover": 362891,
+          "dailyMaxPremium": 0.22
         }
       }
     },
@@ -103,13 +116,17 @@
           "ticker": "PETRJ321",
           "strike": 29.97,
           "premium": 0.51,
-          "sourceUrl": "https://opcoes.net.br/PETRJ321"
+          "sourceUrl": "https://opcoes.net.br/PETRJ321",
+          "turnover": 935390,
+          "dailyMaxPremium": 0.56
         },
         "down": {
           "ticker": "PETRV321",
           "strike": 29.97,
           "premium": 0.16,
-          "sourceUrl": "https://opcoes.net.br/PETRV321"
+          "sourceUrl": "https://opcoes.net.br/PETRV321",
+          "turnover": 954026,
+          "dailyMaxPremium": 0.31
         }
       }
     },
@@ -129,13 +146,17 @@
           "ticker": "PETRJ419",
           "strike": 37.18,
           "premium": 0.34,
-          "sourceUrl": "https://opcoes.net.br/PETRJ419"
+          "sourceUrl": "https://opcoes.net.br/PETRJ419",
+          "turnover": 1872838,
+          "dailyMaxPremium": 0.61
         },
         "down": {
           "ticker": "PETRV419",
           "strike": 37.18,
           "premium": 0.24,
-          "sourceUrl": "https://opcoes.net.br/PETRV419"
+          "sourceUrl": "https://opcoes.net.br/PETRV419",
+          "turnover": 383791,
+          "dailyMaxPremium": 0.31
         }
       }
     }
