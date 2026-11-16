@@ -1,0 +1,164 @@
+{
+  "methodology": {
+    "source": "Cotações históricas públicas de opções e respectivas ações, extraídas de páginas individuais do Opções.Net.Br",
+    "quoteField": "Última cotação de negociação da opção no pregão inicial (não é uma oferta disponível nem execução confirmada)",
+    "stockField": "Última cotação não ajustada da ação nos pregões inicial e de vencimento",
+    "payoff": "Valor intrínseco teórico pela cotação de fechamento da ação no vencimento, não resultado liquidado/realizado nem preço oficial de exercício",
+    "educationalBlock": 100,
+    "cdiNote": "Taxa CDI diária histórica informada em %/dia; composição apenas em dias úteis posteriores ao pregão inicial e até o vencimento",
+    "caveat": "Amostra histórica selecionada para estudo, sujeita a custos, liquidez, mudanças de preço de exercício por proventos e regras de liquidação. Não é uma estratégia executada, oferta, backtest extensivo nem promessa de 100% CDI.",
+    "liquidityCap": "Para não ilustrar a compra de mais unidades do que o volume financeiro registrado no pregão inicial comporta, limitamos blocos didáticos de 100 ao piso de (volume financeiro do pregão / [maior prêmio unitário negociado no dia × 100]); é apenas uma limitação conservadora de escala, sem afirmar que ordens poderiam ter sido executadas ao último preço."
+  },
+  "replays": [
+    {
+      "id": "b3-out-2025",
+      "ticker": "B3SA3",
+      "label": "B3 · outubro de 2025",
+      "entryDate": "2025-10-07",
+      "expiry": "2025-10-17",
+      "spotEntry": 12.24,
+      "spotExpiry": 12.56,
+      "cdiDailyPct": 0.055131,
+      "cdiBusinessDays": 8,
+      "cdiSourceUrl": "https://www.portaldefinancas.com/cdidiaria25.htm",
+      "options": {
+        "up": {
+          "ticker": "B3SAJ107",
+          "strike": 10.65,
+          "premium": 1.68,
+          "sourceUrl": "https://opcoes.net.br/B3SAJ107",
+          "turnover": 32566,
+          "dailyMaxPremium": 1.84
+        },
+        "down": {
+          "ticker": "B3SAV107",
+          "strike": 10.65,
+          "premium": 0.02,
+          "sourceUrl": "https://opcoes.net.br/B3SAV107",
+          "turnover": 12,
+          "dailyMaxPremium": 0.02
+        }
+      }
+    },
+    {
+      "id": "itau-out-2025",
+      "ticker": "ITUB4",
+      "label": "Itaú · outubro de 2025",
+      "entryDate": "2025-10-10",
+      "expiry": "2025-10-17",
+      "spotEntry": 37.14,
+      "spotExpiry": 37.49,
+      "cdiDailyPct": 0.055131,
+      "cdiBusinessDays": 5,
+      "cdiSourceUrl": "https://www.portaldefinancas.com/cdidiaria25.htm",
+      "options": {
+        "up": {
+          "ticker": "ITUBJ400",
+          "strike": 35.73,
+          "premium": 1.62,
+          "sourceUrl": "https://opcoes.net.br/ITUBJ400",
+          "turnover": 12897.49,
+          "dailyMaxPremium": 1.63
+        },
+        "down": {
+          "ticker": "ITUBV400",
+          "strike": 35.73,
+          "premium": 0.03,
+          "sourceUrl": "https://opcoes.net.br/ITUBV400",
+          "turnover": 547,
+          "dailyMaxPremium": 0.05
+        }
+      }
+    },
+    {
+      "id": "vale-out-2025",
+      "ticker": "VALE3",
+      "label": "Vale · outubro de 2025",
+      "entryDate": "2025-10-13",
+      "expiry": "2025-10-17",
+      "spotEntry": 59.75,
+      "spotExpiry": 60.13,
+      "cdiDailyPct": 0.055131,
+      "cdiBusinessDays": 4,
+      "cdiSourceUrl": "https://www.portaldefinancas.com/cdidiaria25.htm",
+      "options": {
+        "up": {
+          "ticker": "VALEJ620",
+          "strike": 58.32,
+          "premium": 1.8,
+          "sourceUrl": "https://opcoes.net.br/VALEJ620",
+          "turnover": 3658675,
+          "dailyMaxPremium": 1.96
+        },
+        "down": {
+          "ticker": "VALEV620",
+          "strike": 58.32,
+          "premium": 0.19,
+          "sourceUrl": "https://opcoes.net.br/VALEV620",
+          "turnover": 362891,
+          "dailyMaxPremium": 0.22
+        }
+      }
+    },
+    {
+      "id": "petro-out-2025",
+      "ticker": "PETR4",
+      "label": "Petrobras · outubro de 2025",
+      "entryDate": "2025-10-13",
+      "expiry": "2025-10-17",
+      "spotEntry": 30.23,
+      "spotExpiry": 29.73,
+      "cdiDailyPct": 0.055131,
+      "cdiBusinessDays": 4,
+      "cdiSourceUrl": "https://www.portaldefinancas.com/cdidiaria25.htm",
+      "options": {
+        "up": {
+          "ticker": "PETRJ321",
+          "strike": 29.97,
+          "premium": 0.51,
+          "sourceUrl": "https://opcoes.net.br/PETRJ321",
+          "turnover": 935390,
+          "dailyMaxPremium": 0.56
+        },
+        "down": {
+          "ticker": "PETRV321",
+          "strike": 29.97,
+          "premium": 0.16,
+          "sourceUrl": "https://opcoes.net.br/PETRV321",
+          "turnover": 954026,
+          "dailyMaxPremium": 0.31
+        }
+      }
+    },
+    {
+      "id": "petro-out-2024",
+      "ticker": "PETR4",
+      "label": "Petrobras · outubro de 2024",
+      "entryDate": "2024-10-16",
+      "expiry": "2024-10-18",
+      "spotEntry": 37.21,
+      "spotExpiry": 36.83,
+      "cdiDailyPct": 0.040168,
+      "cdiBusinessDays": 2,
+      "cdiSourceUrl": "https://www.portaldefinancas.com/cdidiaria24.htm",
+      "options": {
+        "up": {
+          "ticker": "PETRJ419",
+          "strike": 37.18,
+          "premium": 0.34,
+          "sourceUrl": "https://opcoes.net.br/PETRJ419",
+          "turnover": 1872838,
+          "dailyMaxPremium": 0.61
+        },
+        "down": {
+          "ticker": "PETRV419",
+          "strike": 37.18,
+          "premium": 0.24,
+          "sourceUrl": "https://opcoes.net.br/PETRV419",
+          "turnover": 383791,
+          "dailyMaxPremium": 0.31
+        }
+      }
+    }
+  ]
+}
