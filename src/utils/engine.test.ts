@@ -314,3 +314,53 @@ test('o histórico não depende da direção escolhida nem oferece resultados fu
   assert.ok(!active.includes('generateAutomaticScenario'));
   assert.ok(!active.includes('PriceScenarioField'));
 });
+
+
+test('grade ampla de orçamentos: CALL/PUT conciliam centavo a centavo, renda fixa e CDI sem duplicação', () => {
+  const budgets=[1,2,5,10,20,30,50,75,100,150,200,300,500,1000,2500,10000];
+  let tested=0;
+  for(const archive of historicalReplays) for(const budget of budgets){
+    const opportunity=historicalOpportunity(archive,budget);
+    if(!opportunity)continue;
+    for(const direction of ['up','down'] as const){
+      const {choice,optionResult,accounting,stockMovement,matchedDirection}=historicalOutcome(opportunity,direction,budget);
+      assert.equal(roundForTest(choice.used+choice.remaining),budget);
+      assert.ok(choice.position.contractSize>=100 && choice.position.contractSize%100===0);
+      assert.ok(choice.used<=budget && choice.remaining>=0);
+      const quote=archive.options[direction];
+      assert.ok(choice.lots*100*quote.dailyMaxPremium <= quote.turnover+.001);
+      assert.equal(roundForTest(optionResult.value-choice.used),accounting.optionNetResult);
+      assert.equal(roundForTest(accounting.fixedIncomeAtMaturity-choice.remaining),accounting.fixedIncomeNetResult);
+      assert.equal(roundForTest(accounting.optionNetResult+accounting.fixedIncomeNetResult+accounting.hypotheticalSupplement),accounting.totalNetResult);
+      assert.equal(roundForTest(budget+accounting.totalNetResult),accounting.simulatedTotal);
+      assert.ok(accounting.simulatedTotal>=accounting.hypotheticalFloor-.011);
+      assert.ok(accounting.hypotheticalSupplement>=0);
+      assert.equal(stockMovement,Math.sign(roundForTest(archive.spotExpiry-archive.spotEntry)));
+      assert.equal(matchedDirection,stockMovement===(direction==='up'?1:-1));
+      tested++;
+    }
+  }
+  assert.ok(tested>=70,`Reconstituições testadas: ${tested}`);
+});
+
+test('empresas ativas têm recortes históricos e não exibem companhia sem operações', () => {
+  const data=JSON.parse(readFileSync(new URL('../data/stocks.json',import.meta.url),'utf8')) as {ticker:string}[];
+  assert.equal(data.length,4);
+  for(const {ticker} of data){
+    assert.ok(historicalReplays.some(x=>x.ticker===ticker),ticker);
+    assert.ok(availableHistoricalOpportunities(ticker,200).length>=1,ticker);
+  }
+});
+
+test('desfechos históricos não são sorteados: retorno permanece idêntico em repetições da mesma escolha', () => {
+  for(const archive of historicalReplays){
+    const o=historicalOpportunity(archive,200)!;
+    for(const direction of ['up','down'] as const){
+      const a=historicalOutcome(o,direction,200);
+      const b=historicalOutcome(o,direction,200);
+      assert.deepEqual(a.accounting,b.accounting);
+      assert.deepEqual(a.optionResult,b.optionResult);
+      assert.equal(a.stockMovement,b.stockMovement);
+    }
+  }
+});
