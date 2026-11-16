@@ -94,7 +94,7 @@ export default function PulseJourney() {
           <div className="eyebrow">{stock.name} · {money(budget)} · arquivo de 2024–2025</div>
           <div className="pulse-heading-help">
             <h1>Escolha um período histórico</h1>
-            <HelpBubble title="Como escolhemos os contratos?">Usamos recortes com cotações verificáveis de ações e opções que foram negociadas antes do vencimento. A seleção da amostra foi feita para aprendizado; não representa todas as opções disponíveis na época nem comprova que uma compra teria sido executada. Compramos a quantidade máxima de blocos didáticos de 100 unidades que cabe no orçamento e colocamos a sobra em uma renda fixa simulada atrelada ao CDI histórico.</HelpBubble>
+            <HelpBubble title="Como escolhemos os contratos?">Usamos recortes com cotações verificáveis de ações e opções que foram negociadas antes do vencimento. A seleção da amostra foi feita para aprendizado; não representa todas as opções disponíveis na época nem comprova que uma compra teria sido executada. A quantidade de blocos didáticos de 100 unidades respeita o orçamento e um limite conservador baseado no volume financeiro negociado na data. O restante do dinheiro fica numa renda fixa simulada atrelada ao CDI histórico. Isso não comprova que as opções poderiam ter sido compradas por aquele preço.</HelpBubble>
           </div>
           <p className="lead">Escolha um episódio do passado. O resultado do movimento da ação será revelado somente depois da sua previsão.</p>
           {opportunities.length === 0 ? <div className="pulse-panel">
@@ -138,7 +138,7 @@ export default function PulseJourney() {
                 <div><dt>Sobra destinada à renda fixa</dt><dd>{money(strategy.remaining)}</dd></div>
                 <div><dt>Preço de exercício</dt><dd>{money(strategy.original.strike)}</dd></div>
               </dl>
-              <p className="disclaimer">O último negócio registrado não garante a possibilidade de comprar esse volume por esse preço. Não são consideradas corretagem, impostos, proventos, ajustes ou o preço oficial de liquidação. <a href={strategy.original.sourceUrl} target="_blank" rel="noreferrer">Consultar histórico da opção</a>.</p>
+              <p className="disclaimer">O último negócio registrado e o volume histórico não garantem a possibilidade de comprar todas essas unidades por esse preço. Não são consideradas corretagem, impostos, proventos, ajustes ou o preço oficial de liquidação. <a href={strategy.original.sourceUrl} target="_blank" rel="noreferrer">Consultar histórico da opção</a>.</p>
             </details>
           </div>
           <div className="pulse-protection-note"><ShieldCheck size={18}/><span>A proposta acadêmica prevê um piso hipotético de 100% do CDI histórico, mas não possui estrutura de proteção financiada. A parcela em renda fixa recebe os juros históricos apenas sobre a sobra.</span></div>
