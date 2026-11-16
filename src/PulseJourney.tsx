@@ -126,6 +126,7 @@ export default function PulseJourney() {
               <div><dt>Valor inicial</dt><dd>{money(budget)}</dd></div>
               <div><dt>Data inicial</dt><dd>{date(chosen.entryDate)}</dd></div>
               <div><dt>Vencimento</dt><dd>{date(chosen.expiry)}</dd></div>
+              <div><dt>Duração do episódio</dt><dd>{days} dias corridos</dd></div>
               <div><dt>Previsão</dt><dd>{direction === 'up' ? 'Subida (CALL)' : 'Queda (PUT)'}</dd></div>
             </dl>
             <details className="pulse-technical">
@@ -137,6 +138,7 @@ export default function PulseJourney() {
                 <div><dt>Usado em opções</dt><dd>{money(strategy.used)}</dd></div>
                 <div><dt>Sobra destinada à renda fixa</dt><dd>{money(strategy.remaining)}</dd></div>
                 <div><dt>Preço de exercício</dt><dd>{money(strategy.original.strike)}</dd></div>
+                <div><dt>Ponto de equilíbrio teórico</dt><dd>{money(breakEven(strategy.original))}</dd></div>
               </dl>
               <p className="disclaimer">O último negócio registrado e o volume histórico não garantem a possibilidade de comprar todas essas unidades por esse preço. Não são consideradas corretagem, impostos, proventos, ajustes ou o preço oficial de liquidação. <a href={strategy.original.sourceUrl} target="_blank" rel="noreferrer">Consultar histórico da opção</a>.</p>
             </details>
