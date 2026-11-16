@@ -82,7 +82,7 @@ export default function PulseJourney() {
         {step === 2 && <>
           <div className="eyebrow">{stock.name} · {stock.ticker}</div>
           <h1>Quanto você investiria?</h1>
-          <p className="lead">Imagine que você está investindo em uma data de 2024 ou 2025. Na próxima tela, você escolhe um período que já terminou.</p>
+          <p className="lead">Vamos olhar um investimento hipotético em um período de mercado que já aconteceu. O resultado será calculado com os preços históricos.</p>
           <label className="money-input"><span>Valor inicial do exemplo</span><div>R$ <input aria-label="Valor da simulação" type="text" inputMode="decimal" value={amount} onChange={event => { setAmount(event.target.value); changeTerms(); }}/></div></label>
           <div className="simple-presets">{[20,50,100,200].map(number=><button type="button" key={number} aria-pressed={budget===number} onClick={()=>{setAmount(String(number));changeTerms();}}>{money(number)}</button>)}</div>
           {!validBudget && <p className="field-error" role="alert">Escolha um valor entre R$ 1 e R$ 1.000.000.</p>}
@@ -111,9 +111,9 @@ export default function PulseJourney() {
         </>}
 
         {step === 4 && (chosen && strategy ? <>
-          <div className="eyebrow">{stock.name} · estamos em {date(chosen.entryDate)}</div>
+          <div className="eyebrow">{stock.name} · pregão histórico de {date(chosen.entryDate)}</div>
           <h1>Você acha que a ação vai subir ou cair?</h1>
-          <p className="lead">Imagine que você só conhece os dados até {date(chosen.entryDate)}. O vencimento será em {date(chosen.expiry)}. Explore os fatores econômicos e faça sua previsão antes de descobrir o que aconteceu.</p>
+          <p className="lead">Explore os fatores que poderiam influenciar a ação e faça sua previsão para o período de {date(chosen.entryDate)} a {date(chosen.expiry)}. O movimento real da ação só aparece depois da sua escolha.</p>
           <StockFactorsExplorer key={stock.ticker} stock={stock}/>
           <h2 className="pulse-direction-heading">Qual é sua previsão?</h2>
           <div className="pulse-direction-grid">
@@ -167,7 +167,7 @@ export default function PulseJourney() {
             <dl className="pulse-facts">
               <div><dt>Valor inicial investido</dt><dd>{money(budget)}</dd></div>
               <div><dt>Lucro ou prejuízo das opções <HelpBubble title="Lucro da opção">Calculamos o valor intrínseco teórico no vencimento menos o prêmio histórico pago por {strategy.position.contractSize.toLocaleString('pt-BR')} unidades. É uma conta ilustrativa antes de taxas, sem afirmar que a opção foi comprada ou exercida.</HelpBubble></dt><dd className={accounting.optionNetResult < 0 ? 'pulse-negative' : 'pulse-positive'}>{accounting.optionNetResult > 0 ? '+' : ''}{money(accounting.optionNetResult)}</dd></div>
-              <div><dt>Juros da renda fixa <HelpBubble title="Renda fixa">A sobra do orçamento rende hipoteticamente 100% do CDI diário histórico nos {chosen.cdiBusinessDays} dias úteis entre as datas, sem custos ou impostos.</HelpBubble></dt><dd>+{money(accounting.fixedIncomeNetResult)}</dd></div>
+              <div><dt>Juros da renda fixa <HelpBubble title="Renda fixa">A sobra do orçamento recebe juros didáticos por {chosen.cdiBusinessDays} dias úteis, usando uma taxa diária histórica de referência constante ao longo do período. É uma aproximação, não o CDI acumulado exato.</HelpBubble></dt><dd>+{money(accounting.fixedIncomeNetResult)}</dd></div>
               <div><dt>Complemento fictício do CDI <HelpBubble title="Complemento não financiado">Este dinheiro adicional só existe na proposta acadêmica e seria necessário para garantir o piso. Não foi produzido necessariamente pela renda fixa e não existe atualmente uma fonte de financiamento definida.</HelpBubble></dt><dd>+{money(accounting.hypotheticalSupplement)}</dd></div>
               <div className="pulse-result-total-row"><dt>Resultado líquido total</dt><dd className={accounting.totalNetResult < 0 ? 'pulse-negative' : 'pulse-positive'}>{accounting.totalNetResult > 0 ? '+' : ''}{money(accounting.totalNetResult)}</dd></div>
               <div className="pulse-result-total-row"><dt>Valor final hipotético</dt><dd>{money(totalWithFictionalFloor)}</dd></div>
@@ -193,7 +193,7 @@ export default function PulseJourney() {
               <div><dt>Prêmio histórico por unidade</dt><dd>{money(strategy.original.premium)}</dd></div>
               <div><dt>Preço de exercício</dt><dd>{money(strategy.original.strike)}</dd></div>
               <div><dt>Valor intrínseco teórico das opções</dt><dd>{money(optionResult.value)}</dd></div>
-              <div><dt>CDI acumulado no período</dt><dd>{(chosen.cdiRate*100).toFixed(4).replace('.',',')}%</dd></div>
+              <div><dt>CDI aproximado usado no período</dt><dd>{(chosen.cdiRate*100).toFixed(4).replace('.',',')}%</dd></div>
               <div><dt>Valor das opções + renda fixa antes do piso</dt><dd>{money(accounting.economicValueAtMaturity)}</dd></div>
               <div><dt>Piso acadêmico hipotético</dt><dd>{money(accounting.hypotheticalFloor)}</dd></div>
             </dl>
