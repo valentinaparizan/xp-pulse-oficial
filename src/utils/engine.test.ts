@@ -225,6 +225,7 @@ test('reconstituição histórica: todas as entradas são anteriores aos vencime
     for(const side of ['up','down'] as const){
       const q=row.options[side];
       assert.ok(q.premium > 0 && q.strike > 0);
+      assert.ok(q.turnover > 0 && q.dailyMaxPremium >= q.premium);
       assert.ok(q.sourceUrl.startsWith('https://opcoes.net.br/'));
     }
   }
@@ -287,6 +288,18 @@ test('Vale e B3 também apresentam contratos históricos acessíveis para subida
     assert.ok(up.accounting.optionNetResult>0);
     assert.ok(down.accounting.optionNetResult<0);
   }
+});
+
+test('limite conservador evita comprar volume maior que negociação registrada em B3SAV107', () => {
+  const o=historicalOpportunity(historicalReplays.find(x=>x.id==='b3-out-2025')!,200)!;
+  assert.equal(o.fall.original.ticker,'B3SAV107');
+  assert.equal(o.fall.lots,6);
+  assert.equal(o.fall.position.contractSize,600);
+  assert.equal(o.fall.used,12);
+  assert.equal(o.fall.remaining,188);
+  const result=historicalOutcome(o,'down',200);
+  assert.equal(result.accounting.optionNetResult,-12);
+  assert.ok(result.accounting.fixedIncomeNetResult>0);
 });
 
 test('o histórico não depende da direção escolhida nem oferece resultados futuros sorteados', () => {
